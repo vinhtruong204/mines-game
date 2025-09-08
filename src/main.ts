@@ -1,5 +1,5 @@
 import { setEngine } from "./app/getEngine";
-import { MainGame } from "./app/screens/main_game/MainGame";
+import { MainGameScreen } from "./custom/game_screen/MainGameScreen";
 import { userSettings } from "./app/utils/userSettings";
 import { CreationEngine } from "./engine/engine";
 
@@ -28,5 +28,5 @@ setEngine(engine);
   // Show the main screen once the load screen is dismissed
   // await engine.navigation.showScreen(MainScreen);
 
-  await engine.navigation.showScreen(MainGame);
+  await engine.navigation.showScreen(MainGameScreen);
 })();

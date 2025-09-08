@@ -38,8 +38,8 @@ export class CreationEngine extends Application {
   public async init(opts: Partial<ApplicationOptions>): Promise<void> {
     opts.resizeTo ??= window;
     opts.resolution ??= getResolution();
-    opts.width = 720;
-    opts.height = 1280;
+    // opts.width = 720;
+    // opts.height = 1280;
 
     await super.init(opts);
 

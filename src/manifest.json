@@ -83,6 +83,23 @@
               "tps": true
             }
           }
+        },
+        {
+          "alias": [
+            "main/custom/triangle.png",
+            "triangle.png"
+          ],
+          "src": [
+            "main/custom/triangle@0.5x.webp",
+            "main/custom/triangle@0.5x.png",
+            "main/custom/triangle.webp",
+            "main/custom/triangle.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },

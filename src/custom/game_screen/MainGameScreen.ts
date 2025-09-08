@@ -1,29 +1,22 @@
-import { Container, Text, Ticker } from "pixi.js";
-import { engine } from "../../getEngine";
+import { Container, Ticker } from "pixi.js";
+import { engine } from "../../app/getEngine";
+import { BoardContainer } from "../BoardContainer";
 
-export class MainGame extends Container {
+export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
     public static assetBundles = ["main"];
 
     private paused = false;
 
+    // Board container
+    private boardContainer: BoardContainer;
+
     constructor() {
         super();
 
-        const wrappedText = new Text({
-            text: 'This is a long piece of text that will automatically wrap to multiple lines',
-            style: {
-                fontSize: 20,
-                wordWrap: true,
-                wordWrapWidth: 200,
-                lineHeight: 30,
-                fill: 'white'
-            }
-        });
+        this.boardContainer = new BoardContainer();
 
-        wrappedText.position.set(0, 0);
-
-        this.addChild(wrappedText);
+        this.addChild(this.boardContainer);
     }
 
 
@@ -53,9 +46,11 @@ export class MainGame extends Container {
 
     /** Resize the screen, fired whenever window size changes */
     public resize(width: number, height: number) {
-        const centerX = width * 0.5;
-        const centerY = height * 0.5;
+        const centerX = (width - this.boardContainer.width) * 0.5;
+        // const centerY = (height - this.boardContainer.height) * 0.5;
 
+        // Center the board when window size change
+        this.boardContainer.position.set(centerX, 30);
     }
 
     /** Show screen with animations */
