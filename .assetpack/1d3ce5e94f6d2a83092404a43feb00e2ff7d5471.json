@@ -25,6 +25,125 @@
                 "success": true
             }
         },
+        "D:/Work/mines-game/raw-assets/main{m}/custom": {
+            "isFolder": true,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757327629400,
+                "duration": 0.4335999999893829,
+                "success": true
+            }
+        },
+        "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png": {
+            "isFolder": false,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}/custom",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757327629400,
+                "duration": 7.221299999975599,
+                "success": true
+            },
+            "hash": "hokOmA"
+        },
+        ".assetpack/mipmap/main{m}/custom/triangle.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/custom/triangle.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/custom/triangle.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/custom/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/custom/triangle.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/custom/triangle.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/custom/triangle.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/custom/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/custom/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/custom/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/custom/triangle@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/custom/triangle@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/custom/triangle@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
         "D:/Work/mines-game/raw-assets/main{m}/logo-white.svg": {
             "isFolder": false,
             "parent": "D:/Work/mines-game/raw-assets/main{m}",
@@ -565,125 +684,6 @@
             "transformData": {
                 "page": 0
             }
-        },
-        "D:/Work/mines-game/raw-assets/main{m}/custom": {
-            "isFolder": true,
-            "parent": "D:/Work/mines-game/raw-assets/main{m}",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {},
-            "stats": {
-                "date": 1757327629400,
-                "duration": 0.4335999999893829,
-                "success": true
-            }
-        },
-        "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png": {
-            "isFolder": false,
-            "parent": "D:/Work/mines-game/raw-assets/main{m}/custom",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {},
-            "stats": {
-                "date": 1757327629400,
-                "duration": 7.221299999975599,
-                "success": true
-            },
-            "hash": "hokOmA"
-        },
-        ".assetpack/mipmap/main{m}/custom/triangle.png": {
-            "isFolder": false,
-            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/main{m}/custom/triangle.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/mines-game/public/assets/main/custom/triangle.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/main{m}/custom/triangle.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/main{m}/custom/triangle.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/mines-game/public/assets/main/custom/triangle.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/main{m}/custom/triangle.webp",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png": {
-            "isFolder": false,
-            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/custom/triangle.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/main{m}/custom/triangle@0.5x.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/mines-game/public/assets/main/custom/triangle@0.5x.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/main{m}/custom/triangle@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/main{m}/custom/triangle@0.5x.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/main{m}/custom/triangle@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/mines-game/public/assets/main/custom/triangle@0.5x.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/main{m}/custom/triangle@0.5x.webp",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
         },
         "D:/Work/mines-game/raw-assets/preload{m}": {
             "isFolder": true,

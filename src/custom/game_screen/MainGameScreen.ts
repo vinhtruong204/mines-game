@@ -1,6 +1,7 @@
 import { Container, Ticker } from "pixi.js";
 import { engine } from "../../app/getEngine";
-import { BoardContainer } from "../BoardContainer";
+import { UIManager } from "../manager_ui/UIManager";
+import { BoardContainer } from "../_game/board/BoardContainer";
 
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
@@ -11,10 +12,15 @@ export class MainGameScreen extends Container {
     // Board container
     private boardContainer: BoardContainer;
 
+    // UI Manager
+    private uiManager: UIManager;
+
     constructor() {
         super();
 
         this.boardContainer = new BoardContainer();
+
+        this.uiManager = new UIManager(0, this.boardContainer.y + this.boardContainer.height);
 
         this.addChild(this.boardContainer);
     }

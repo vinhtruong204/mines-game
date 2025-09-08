@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
-import { GlobalConfig } from "./config/GlobalConfig";
 import { FancyButton } from "@pixi/ui";
+import { GlobalConfig } from "../../config/GlobalConfig";
 
 export class BoardContainer extends Container {
 
@@ -43,7 +43,7 @@ export class BoardContainer extends Container {
                 });
 
                 button.setSize(buttonSize, buttonSize);
-                button.position.set(j * buttonSize , i * buttonSize);
+                button.position.set(j * buttonSize, i * buttonSize);
 
                 this.addChild(button);
             }
