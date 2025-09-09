@@ -17,13 +17,41 @@ type ButtonOptions = typeof defaultButtonOptions;
  * The big rectangle button, with a label, idle and pressed states
  */
 export class Button extends FancyButton {
+  private _pressed: boolean = false;
+  get pressed(): boolean {
+    return this._pressed;
+  }
+  set pressed(value: boolean) {
+    this._pressed = value;
+    if (value) {
+      this.animations = {};
+    } else {
+      this.animations = {
+        hover: {
+          props: {
+            scale: { x: 1.03, y: 1.03 },
+            y: 0,
+          },
+          duration: 100,
+        },
+        pressed: {
+          props: {
+            scale: { x: 0.97, y: 0.97 },
+            y: 10,
+          },
+          duration: 100,
+        },
+      };
+    }
+  }
+
   constructor(options: Partial<ButtonOptions> = {}) {
     const opts = { ...defaultButtonOptions, ...options };
 
     super({
       defaultView: "button.png",
       nineSliceSprite: [38, 50, 38, 50],
-      anchor: 0.5,
+      anchor: 0,
       text: new Label({
         text: opts.text,
         style: {

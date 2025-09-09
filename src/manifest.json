@@ -9,6 +9,40 @@
       "assets": [
         {
           "alias": [
+            "main/custom/bomb.png",
+            "bomb.png"
+          ],
+          "src": [
+            "main/custom/bomb@0.5x.webp",
+            "main/custom/bomb@0.5x.png",
+            "main/custom/bomb.webp",
+            "main/custom/bomb.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "main/custom/diamond.png",
+            "diamond.png"
+          ],
+          "src": [
+            "main/custom/diamond@0.5x.webp",
+            "main/custom/diamond@0.5x.png",
+            "main/custom/diamond.webp",
+            "main/custom/diamond.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "main/custom/select.png",
             "select.png"
           ],

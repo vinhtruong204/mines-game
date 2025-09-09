@@ -130,6 +130,10 @@ export class ManualBettingContainer extends Container {
     private handleWithdrawButtonClicked() {
         // Container betting progress notice completed
         this.onBettingCompleted?.();
+
+        // Disable cashout button when betting is completed
+        this.cashoutButton.alpha = 0.5;
+        this.cashoutButton.interactive = false;
     }
 
     private onRandomPickClicked() {

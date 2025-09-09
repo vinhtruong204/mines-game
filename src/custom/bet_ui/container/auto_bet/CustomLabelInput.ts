@@ -42,7 +42,7 @@ export class CustomLabelInput extends LabeledInput {
             height: defaultButtonSize.height,
             fontSize: 40,
         });
-        this.resetButton.position.set(this.leftLabel.x, this.leftLabel.height);
+        this.resetButton.position.set(this.leftLabel.x, this.leftLabel.y + this.leftLabel.height);
         this.resetButton.onPress.connect(this.onResetClicked.bind(this));
 
         // Increase button
@@ -52,7 +52,7 @@ export class CustomLabelInput extends LabeledInput {
             height: defaultButtonSize.height,
             fontSize: 40,
         });
-        this.increaseButton.position.set(this.resetButton.x + this.resetButton.width, this.leftLabel.height);
+        this.increaseButton.position.set(this.resetButton.x + this.resetButton.width, this.leftLabel.y + this.leftLabel.height);
         this.increaseButton.alpha = 0.5;
         this.increaseButton.onPress.connect(this.onIncreaseClicked.bind(this));
 

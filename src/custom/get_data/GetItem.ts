@@ -1,5 +1,5 @@
-import { GlobalConfig } from "../../app/config/GlobalConfig";
 import { ItemType } from "../_game/board/ItemType";
+import { GlobalConfig } from "../config/GlobalConfig";
 
 export class GetItem {
   private static mockData: number[][] = [
