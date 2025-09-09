@@ -4,3 +4,10 @@ export enum GameMode {
     HARD = 2,
     INSANE = 3,
 }
+
+export const GameModeLabel: Record<GameMode, string> = {
+    [GameMode.EASY]: "Easy",
+    [GameMode.MEDIUM]: "Medium",
+    [GameMode.HARD]: "Hard",
+    [GameMode.INSANE]: "Insane",
+};

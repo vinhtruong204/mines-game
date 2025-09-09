@@ -13,8 +13,8 @@ export class UIManager extends Container {
     private manualBetContainer: ManualBetContainer;
     private autoBetContainer: AutoBetContainer;
 
-    constructor(x: number, y: number) {
-        super({ x: x, y: y });
+    constructor() {
+        super();
 
         this.containerCapsule = new ContainerCapsule(0, 0);
 

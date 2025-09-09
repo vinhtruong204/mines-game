@@ -20,9 +20,10 @@ export class MainGameScreen extends Container {
 
         this.boardContainer = new BoardContainer();
 
-        this.uiManager = new UIManager(0, this.boardContainer.y + this.boardContainer.height);
+        // this.uiManager = new UIManager(this.boardContainer.x, this.boardContainer.y + this.boardContainer.height);
+        this.uiManager = new UIManager();
 
-        this.addChild(this.boardContainer);
+        this.addChild(this.boardContainer, this.uiManager);
     }
 
 
@@ -53,10 +54,13 @@ export class MainGameScreen extends Container {
     /** Resize the screen, fired whenever window size changes */
     public resize(width: number, height: number) {
         const centerX = (width - this.boardContainer.width) * 0.5;
-        // const centerY = (height - this.boardContainer.height) * 0.5;
+        const centerY = (height - this.boardContainer.height) * 0.5;
 
         // Center the board when window size change
         this.boardContainer.position.set(centerX, 30);
+
+        const uiManagerOffsetX = (this.boardContainer.width - this.uiManager.width) / 2;
+        this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height);
     }
 
     /** Show screen with animations */

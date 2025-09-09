@@ -10,7 +10,6 @@ import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { AutoBettingEvent } from "../../../events/auto_betting_events/AutoBettingEvent";
 import { WinContainerEvent } from "../../../events/WinContainerEvent";
 import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
-import { GameMode } from "../../mines_ui/GameMode";
 import { GameStateManager } from "../../../manage_game_states/GameStateManager";
 import { GameState } from "../../../manage_game_states/GameState";
 
@@ -55,7 +54,7 @@ export class AutoBetContainer extends BetContainer {
 
         this.numberOfGames = new LabeledInput(
             0,
-            this.selectMines.y + this.selectMines.height,
+            this.selectModeGroup.y + this.selectModeGroup.height,
             350,
             50,
             'Number of Games',
@@ -110,7 +109,7 @@ export class AutoBetContainer extends BetContainer {
     }
 
     private onStartAutobet() {
-        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode);
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
 
         if (this.startAutobet.text === 'Start Autobet') {
             GameStateManager.getInstance().setState(GameState.BETTING);

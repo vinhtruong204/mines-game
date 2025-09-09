@@ -8,7 +8,6 @@ import { WinContainerEvent } from "../../../events/WinContainerEvent";
 import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
 import { GameState } from "../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../manage_game_states/GameStateManager";
-import { GameMode } from "../../mines_ui/GameMode";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
@@ -32,7 +31,7 @@ export class ManualBetContainer extends BetContainer {
         // Register listener to handle item pressed event
         globalEmitter.on(ManualBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
 
-        this.manualBettingContainer = new ManualBettingContainer(this.selectMines.x, this.selectMines.y);
+        this.manualBettingContainer = new ManualBettingContainer(this.selectModeGroup.x, this.selectModeGroup.y);
 
         // Add a callback to handle event betting completed
         this.manualBettingContainer.onBettingCompleted = this.onBettingCompleted.bind(this);
@@ -44,7 +43,8 @@ export class ManualBetContainer extends BetContainer {
             fontSize: 40
         });
 
-        this.betButton.position.set(this.selectMines.width / 2, this.selectMines.y + this.selectMines.height + 4);
+        this.betButton.anchor.set(0, 0);
+        this.betButton.position.set((this.selectModeGroup.width - this.betButton.width) / 2, this.selectModeGroup.y + this.selectModeGroup.height + 4);
 
         // Handle bet event
         this.betButton.onPress.connect(this.onBetButtonClicked.bind(this));
@@ -54,7 +54,7 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private onBetButtonClicked() {
-        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode)
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
         GameStateManager.getInstance().setState(GameState.BETTING);
 
         // Emit event to generate the board
@@ -84,11 +84,12 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private updateUI(isBetCompleted: boolean) {
-        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode)
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
+
         if (isBetCompleted) {
             this.manualBettingContainer.visible = false;
 
-            this.selectMines.visible = true;
+            this.selectModeGroup.visible = true;
             this.betButton.visible = true;
         }
         else {
@@ -99,7 +100,7 @@ export class ManualBetContainer extends BetContainer {
                 Number(this.betAmount.getInputAmount().value),
             );
 
-            this.selectMines.visible = false;
+            this.selectModeGroup.visible = false;
             this.betButton.visible = false;
         }
     }

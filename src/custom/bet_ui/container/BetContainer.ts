@@ -1,15 +1,17 @@
 import { Container } from "pixi.js";
 import { LabeledInput } from "../base/LabeledInput";
 import { InputBetAmount } from "../bet_amount/InputBetAmount";
-import { SelectMines } from "../mines_ui/SelectMines";
+import { SelectModeManager as SelectModeGroup } from "./manual_bet/SelectModeManager";
+import { GameMode } from "../mines_ui/GameMode";
 
 type BetState = {
     betAmount: string;
+    gameMode: GameMode;
 };
 
 export class BetContainer extends Container {
     protected betAmount: LabeledInput;
-    protected selectMines: SelectMines;
+    protected selectModeGroup: SelectModeGroup;
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
@@ -18,19 +20,24 @@ export class BetContainer extends Container {
             new InputBetAmount()
         );
 
-        this.selectMines = new SelectMines(this.betAmount.x, this.betAmount.y + this.betAmount.height);
 
-        this.addChild(this.betAmount, this.selectMines);
+        // Select mode group
+        this.selectModeGroup = new SelectModeGroup();
+        this.selectModeGroup.position.set(this.betAmount.x, this.betAmount.y + this.betAmount.height);
+
+        this.addChild(this.betAmount, this.selectModeGroup);
     }
 
     public getBetState(): BetState {
         return {
-            betAmount: this.betAmount.getInputAmount().value
+            betAmount: this.betAmount.getInputAmount().value,
+            gameMode: this.selectModeGroup.getCurrentMode(),
         };
     }
 
     public setBetState(betState: BetState) {
         this.betAmount.getInputAmount().value = betState.betAmount;
+        this.selectModeGroup.setCurrentMode(betState.gameMode);
     }
 
 }
