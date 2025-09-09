@@ -12,6 +12,7 @@ import { WinContainerEvent } from "../../../events/WinContainerEvent";
 import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
 import { GameStateManager } from "../../../manage_game_states/GameStateManager";
 import { GameState } from "../../../manage_game_states/GameState";
+import { ScrollView } from "./ScrollView";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -35,6 +36,8 @@ export class AutoBetContainer extends BetContainer {
 
     private startAutobet: Button;
     private profitMultiplierPerTime: number = 0;
+
+    private scrollView: ScrollView;
 
     constructor(x: number, y: number) {
         super(x, y);
@@ -88,7 +91,10 @@ export class AutoBetContainer extends BetContainer {
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
 
-        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
+
+        this.scrollView = new ScrollView();
+        this.scrollView.position.set(this.betAmount.width + 20, 0);
+        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet, this.scrollView);
     }
 
     private onItemPressed(buttonPressedCount: number) {
