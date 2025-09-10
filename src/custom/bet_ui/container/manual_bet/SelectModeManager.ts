@@ -32,7 +32,7 @@ export class SelectModeManager extends Container {
             const button = new Button({
                 text: GameModeLabel[i as GameMode],
                 width: 140,
-                height: 120,
+                height: 100,
                 fontSize: 32,
             });
 

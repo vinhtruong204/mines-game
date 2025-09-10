@@ -13,7 +13,7 @@ import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
 import { GameStateManager } from "../../../manage_game_states/GameStateManager";
 import { GameState } from "../../../manage_game_states/GameState";
 import { engine } from "../../../../app/getEngine";
-import { FederatedPointerEvent } from "pixi.js";
+import { FederatedPointerEvent, FederatedWheelEvent } from "pixi.js";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -21,6 +21,8 @@ const defaultButtonSize = {
     width: 290,
     height: 90
 }
+
+const scrollHeight = 620;
 
 export class AutoBetContainer extends BetContainer {
     private numberOfGames: LabeledInput;
@@ -102,11 +104,19 @@ export class AutoBetContainer extends BetContainer {
         this.on("pointerdown", this.startDrag, this);
         this.on("pointerup", this.endDrag, this);
         this.on("pointerupoutside", this.endDrag, this);
+
+        this.on('wheel', this.onWheel, this);
+    }
+
+    private onWheel(event: FederatedWheelEvent) {
+        // Access scroll delta information
+        // console.log('Vertical scroll:', event.deltaY);
+        this.updateUIVisibility(-event.deltaY / 5);
     }
 
     private dragStartY: number = 0;
     private startDrag(e: FederatedPointerEvent) {
-        console.log("start drag");
+        // console.log("start drag");
         this.isDragging = true;
         this.dragStartY = e.global.y;
 
@@ -124,7 +134,7 @@ export class AutoBetContainer extends BetContainer {
     }
 
     private endDrag() {
-        console.log("end drag");
+        // console.log("end drag");
         this.isDragging = false;
         engine().stage.off("pointermove", this.onDragMove, this);
     }
@@ -138,17 +148,20 @@ export class AutoBetContainer extends BetContainer {
         // console.log(deltaY);
         // // Can't scroll down
         if (deltaY > 0 && !this.canScrollDown) {
-            console.log('Can not scroll down');
+            // console.log('Can not scroll down');
             return;
 
         }
 
         // Can't scroll up
-        if (deltaY < 0 && !this.canScrollUp) { console.log('Can not scroll up'); return; }
+        if (deltaY < 0 && !this.canScrollUp) {
+            // console.log('Can not scroll up'); 
+            return;
+        }
 
         for (const child of this.children) {
             child.position.y += deltaY;
-            if (child.y < 0 || child.y + child.height >= 600) {
+            if (child.y < 0 || child.y + child.height >= scrollHeight) {
                 child.visible = false;
             } else {
                 child.visible = true;
