@@ -92,6 +92,8 @@ export class AutoBetContainer extends BetContainer {
         this.startAutobet.anchor.set(0.5, 0.5);
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
+        this.startAutobet.visible = false;
+
         this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
 
         this.eventMode = 'static';
@@ -127,20 +129,38 @@ export class AutoBetContainer extends BetContainer {
         engine().stage.off("pointermove", this.onDragMove, this);
     }
 
+    private canScrollDown: boolean = false;
+    private canScrollUp: boolean = true;
     private updateUIVisibility(deltaY: number) {
         // Calm y value of bet amount
         // if (this.betAmount.y <= 0) this.betAmount.y = 0;
 
-        // if (deltaY > 0 && this.betAmount.y == 0) return;
+        // console.log(deltaY);
+        // // Can't scroll down
+        if (deltaY > 0 && !this.canScrollDown) {
+            console.log('Can not scroll down');
+            return;
+
+        }
+
+        // Can't scroll up
+        if (deltaY < 0 && !this.canScrollUp) { console.log('Can not scroll up'); return; }
+
         for (const child of this.children) {
-            console.log(deltaY);
             child.position.y += deltaY;
-            if (child.y < 0) {
+            if (child.y < 0 || child.y + child.height >= 600) {
                 child.visible = false;
             } else {
                 child.visible = true;
             }
         }
+
+        // console.log(this.betAmount.visible);
+        if (this.betAmount.visible == true) this.canScrollDown = false;
+        else this.canScrollDown = true;
+
+        if (this.startAutobet.visible == true) this.canScrollUp = false;
+        else this.canScrollUp = true;
     }
 
     private onItemPressed(buttonPressedCount: number) {

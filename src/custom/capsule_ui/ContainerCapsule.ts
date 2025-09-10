@@ -29,8 +29,8 @@ export class ContainerCapsule extends Container {
 
         this.rectContainer = new Graphics()
             .roundRect(0, 0, this.capsuleWidth, this.capsuleHeight, this.cornerRadius)
-            .fill({ color: 'gray', alpha: 0.75 })
-            .stroke({ width: 5, color: 'white', alignment: 0.5 });
+            .fill({ color: 'gray', alpha: 1 })
+            .stroke({ width: 5, color: 'white', alignment: 1 });
 
         // Left child (Manual)
         this.leftChild = new ChildCapsule(0, 0, this.capsuleWidth / 2, this.capsuleHeight, CapsuleType.MANUAL);
@@ -52,6 +52,8 @@ export class ContainerCapsule extends Container {
 
         // Choose manual first
         this.handleSelection(this.leftChild);
+
+        this.zIndex = 10;
 
     }
 
