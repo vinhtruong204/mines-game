@@ -12,7 +12,8 @@ import { WinContainerEvent } from "../../../events/WinContainerEvent";
 import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
 import { GameStateManager } from "../../../manage_game_states/GameStateManager";
 import { GameState } from "../../../manage_game_states/GameState";
-import { ScrollView } from "./ScrollView";
+import { engine } from "../../../../app/getEngine";
+import { FederatedPointerEvent } from "pixi.js";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -37,7 +38,8 @@ export class AutoBetContainer extends BetContainer {
     private startAutobet: Button;
     private profitMultiplierPerTime: number = 0;
 
-    private scrollView: ScrollView;
+    // private scrollView: ScrollView;
+    private isDragging: boolean = false;
 
     constructor(x: number, y: number) {
         super(x, y);
@@ -90,11 +92,55 @@ export class AutoBetContainer extends BetContainer {
         this.startAutobet.anchor.set(0.5, 0.5);
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
+        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
 
+        this.eventMode = 'static';
+        engine().stage.eventMode = 'static';
 
-        this.scrollView = new ScrollView();
-        this.scrollView.position.set(this.betAmount.width + 20, 0);
-        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet, this.scrollView);
+        this.on("pointerdown", this.startDrag, this);
+        this.on("pointerup", this.endDrag, this);
+        this.on("pointerupoutside", this.endDrag, this);
+    }
+
+    private dragStartY: number = 0;
+    private startDrag(e: FederatedPointerEvent) {
+        console.log("start drag");
+        this.isDragging = true;
+        this.dragStartY = e.global.y;
+
+        engine().stage.on("pointermove", this.onDragMove, this);
+    }
+
+    private onDragMove(e: FederatedPointerEvent) {
+        if (!this.isDragging) return;
+
+        const deltaY = e.global.y - this.dragStartY;
+        this.dragStartY = e.global.y;
+        // console.log(deltaY);
+
+        this.updateUIVisibility(deltaY);
+    }
+
+    private endDrag() {
+        console.log("end drag");
+        this.isDragging = false;
+        engine().stage.off("pointermove", this.onDragMove, this);
+    }
+
+    private updateUIVisibility(deltaY: number) {
+        // Calm y value of bet amount
+        // if (this.betAmount.y <= 0) this.betAmount.y = 0;
+
+        // if (deltaY > 0 && this.betAmount.y == 0) return;
+        for (const child of this.children) {
+            console.log(deltaY);
+            child.position.y += deltaY;
+            if (child.y < 0) {
+                child.visible = false;
+            } else {
+                child.visible = true;
+            }
+        }
     }
 
     private onItemPressed(buttonPressedCount: number) {
