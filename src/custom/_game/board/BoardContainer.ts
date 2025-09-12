@@ -100,7 +100,7 @@ export class BoardContainer extends Container {
         // Update default view
         if (itemType === ItemType.DIAMOND)
             btn.defaultView = this.getButtonView("diamond.png");
-        else {
+        else if (itemType === ItemType.MINE) {
             btn.defaultView = this.getButtonView("bomb.png");
 
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
@@ -144,7 +144,7 @@ export class BoardContainer extends Container {
                 this.resetAllButtons();
             }
         }
-        else {
+        else if (state === GameState.NOT_BETTING) {
             if (this.isAuto) {
                 this.resetAllButtons();
                 this.ticker.stop();
@@ -239,14 +239,15 @@ export class BoardContainer extends Container {
                 const item = await GetItem.getItemType(i, j);
                 if (item === ItemType.DIAMOND) {
                     this.buttons[i][j].defaultView = this.getButtonView("diamond.png");
-                    if (this.buttons[i][j].pressed) {
-                        this.diamondCount++;
-                    }
-                } else {
+
+                    // Increase diamond count
+                    if (this.buttons[i][j].pressed) this.diamondCount++;
+                }
+                else if (item === ItemType.MINE) {
                     this.buttons[i][j].defaultView = this.getButtonView("bomb.png");
-                    if (this.buttons[i][j].pressed) {
-                        this.mineCount++;
-                    }
+
+                    // Increase mine count
+                    if (this.buttons[i][j].pressed) this.mineCount++;
                 }
 
                 this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.35;

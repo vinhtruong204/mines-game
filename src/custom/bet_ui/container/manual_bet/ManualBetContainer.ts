@@ -80,7 +80,7 @@ export class ManualBetContainer extends BetContainer {
 
     private onGameStateChange(state: GameState) {
         if (state === GameState.NOT_BETTING) this.updateUI(true);
-        else this.updateUI(false);
+        else if (state === GameState.BETTING) this.updateUI(false);
     }
 
     private updateUI(isBetCompleted: boolean) {

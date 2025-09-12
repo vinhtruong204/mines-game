@@ -72,7 +72,7 @@ export class LabeledInput extends Container {
         if (state === GameState.BETTING) {
             this.interactive = false;
             this.interactiveChildren = false;
-        } else {
+        } else if (state === GameState.NOT_BETTING) {
             this.interactive = true;
             this.interactiveChildren = true;
         }
