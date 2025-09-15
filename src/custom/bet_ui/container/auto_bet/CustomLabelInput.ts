@@ -8,7 +8,7 @@ import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { GameState } from "../../../manage_game_states/GameState";
 
 const defaultInputFieldSize = {
-    width: 500,
+    width: 530,
     height: 90
 }
 
