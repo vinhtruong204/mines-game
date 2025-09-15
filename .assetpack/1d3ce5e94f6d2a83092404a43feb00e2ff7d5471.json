@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757514156020,
-                "duration": 2.6116000000001804,
+                "date": 1757912511015,
+                "duration": 1.068399999999997,
                 "success": true
             }
         },
@@ -20,8 +20,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757514156020,
-                "duration": 3.4228000000002794,
+                "date": 1757912511015,
+                "duration": 1.6493000000000393,
                 "success": true
             }
         },
@@ -468,11 +468,11 @@
             },
             "transformData": {},
             "stats": {
-                "date": 1757514156020,
-                "duration": 3.5278999999991356,
+                "date": 1757912511015,
+                "duration": 1.669399999999996,
                 "success": true
             },
-            "hash": "FX9EmA"
+            "hash": "Wq9lMw"
         },
         "D:/Work/mines-game/public/assets/main/logo-white.svg": {
             "isFolder": false,
@@ -1009,8 +1009,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757514156021,
-                "duration": 2.2373999999999796,
+                "date": 1757912511016,
+                "duration": 1.1567999999999756,
                 "success": true
             }
         },
@@ -1023,11 +1023,11 @@
             },
             "transformData": {},
             "stats": {
-                "date": 1757514156021,
-                "duration": 2.269899999999325,
+                "date": 1757912511016,
+                "duration": 1.1526000000000067,
                 "success": true
             },
-            "hash": "Uo_wSQ"
+            "hash": "LmftHw"
         },
         "D:/Work/mines-game/public/assets/preload/logo.svg": {
             "isFolder": false,
