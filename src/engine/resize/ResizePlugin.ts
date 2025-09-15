@@ -143,8 +143,8 @@ export class CreationResizePlugin {
     this._resizeId = null;
     this._resizeTo = null;
     app.resizeOptions = {
-      minWidth: 768,
-      minHeight: 1024,
+      minWidth: 720,
+      minHeight: 1080,
       letterbox: true,
       ...options.resizeOptions,
     };

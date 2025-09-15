@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757929784620,
-                "duration": 0.184099999954924,
+                "date": 1757933955716,
+                "duration": 12.682999999989988,
                 "success": true
             }
         },
@@ -20,10 +20,258 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757929784620,
-                "duration": 0.12769999995362014,
+                "date": 1757933955716,
+                "duration": 12.624199999991106,
                 "success": true
             }
+        },
+        "D:/Work/mines-game/raw-assets/main{m}/anim": {
+            "isFolder": true,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757933955716,
+                "duration": 12.605500000005122,
+                "success": true
+            }
+        },
+        "D:/Work/mines-game/raw-assets/main{m}/anim/tile.png": {
+            "isFolder": false,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}/anim",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757933955716,
+                "duration": 497.9910000000091,
+                "success": true
+            },
+            "hash": "s6DKdA"
+        },
+        ".assetpack/mipmap/main{m}/anim/tile.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/anim/tile.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/anim/tile.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/anim/tile.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/anim/tile.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/anim/tile.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/anim/tile.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/anim/tile.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/main{m}/anim/tile@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/anim/tile.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/anim/tile@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/anim/tile@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/anim/tile@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/main{m}/anim/tile@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/main{m}/anim/tile@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/main{m}/anim/tile@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/raw-assets/main{m}/anim/tile.skel": {
+            "isFolder": false,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}/anim",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757933955723,
+                "duration": 8.173699999999371,
+                "success": true
+            },
+            "hash": "LOc-dQ"
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile.skel": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/anim/tile.skel",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/raw-assets/main{m}/anim/tile.atlas": {
+            "isFolder": false,
+            "parent": "D:/Work/mines-game/raw-assets/main{m}/anim",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757933955728,
+                "duration": 3.514499999990221,
+                "success": true
+            },
+            "hash": "hxukdA"
+        },
+        ".assetpack/mipmap-spine-atlas/main{m}/anim/tile.atlas": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/anim/tile.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/spine-atlas-compress/main{m}/anim/tile.png.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap-spine-atlas/main{m}/anim/tile.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile.png.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/spine-atlas-compress/main{m}/anim/tile.png.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/spine-atlas-compress/main{m}/anim/tile.webp.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap-spine-atlas/main{m}/anim/tile.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile.webp.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/spine-atlas-compress/main{m}/anim/tile.webp.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap-spine-atlas/main{m}/anim/tile@0.5x.atlas": {
+            "isFolder": false,
+            "transformParent": "D:/Work/mines-game/raw-assets/main{m}/anim/tile.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/spine-atlas-compress/main{m}/anim/tile@0.5x.png.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap-spine-atlas/main{m}/anim/tile@0.5x.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile@0.5x.png.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/spine-atlas-compress/main{m}/anim/tile@0.5x.png.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/spine-atlas-compress/main{m}/anim/tile@0.5x.webp.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap-spine-atlas/main{m}/anim/tile@0.5x.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/mines-game/public/assets/main/anim/tile@0.5x.webp.atlas": {
+            "isFolder": false,
+            "transformParent": ".assetpack/spine-atlas-compress/main{m}/anim/tile@0.5x.webp.atlas",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
         },
         "D:/Work/mines-game/raw-assets/main{m}/custom": {
             "isFolder": true,

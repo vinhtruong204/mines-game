@@ -31,8 +31,8 @@ setEngine(engine);
 
   await engine.navigation.showScreen(MainGameScreen);
 
-  const spine = Spine.from({ skeleton: 'tile.json', atlas: 'tile.atlas' });
-  spine.position.set(200, 200);
+  const spine = Spine.from({ skeleton: "tile.skel", atlas: "tile.atlas" });
+  spine.position.set(500, 500);
 
   const crownAppear = spine.state.setAnimation(0, "crown-appear", false);
   crownAppear.listener = {

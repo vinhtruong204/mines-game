@@ -9,6 +9,37 @@
       "assets": [
         {
           "alias": [
+            "main/anim/tile.skel",
+            "tile.skel"
+          ],
+          "src": [
+            "main/anim/tile.skel"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "main/anim/tile.atlas",
+            "tile.atlas"
+          ],
+          "src": [
+            "main/anim/tile@0.5x.webp.atlas",
+            "main/anim/tile@0.5x.png.atlas",
+            "main/anim/tile.webp.atlas",
+            "main/anim/tile.png.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "main/custom/BG.png",
             "BG.png"
           ],
@@ -77,8 +108,7 @@
         },
         {
           "alias": [
-            "main/custom/tile.png",
-            "tile.png"
+            "main/custom/tile.png"
           ],
           "src": [
             "main/custom/tile@0.5x.webp",

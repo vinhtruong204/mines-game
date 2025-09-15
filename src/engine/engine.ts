@@ -48,6 +48,8 @@ export class CreationEngine extends Application {
     // Add a visibility listener, so the app can pause sounds and screens
     document.addEventListener("visibilitychange", this.visibilityChange);
 
+    // await Assets.load([{ src: "/custom/tile.skel", alias: 'tile-skel' }, { src: "/custom/tile.atlas", alias: 'tile-atlas' }]);
+
     // Init PixiJS assets with this asset manifest
     await Assets.init({ manifest, basePath: "assets" });
     await Assets.loadBundle("preload");
