@@ -14,8 +14,13 @@ import { GlobalConfig } from "../../config/GlobalConfig";
 import { GameState } from "../../manage_game_states/GameState";
 import { GameStateManager } from "../../manage_game_states/GameStateManager";
 
+const buttonSize = {
+    width: 128,
+    height: 110
+}
+
 export class BoardContainer extends Container {
-    private buttonSize: number = 0;
+    // private buttonSize: number = 0;
     private buttons: Button[][] = [];
     private buttonPressedAutoCount: number = 0;
 
@@ -52,24 +57,21 @@ export class BoardContainer extends Container {
         const rows = GlobalConfig.TOTAL_ROWS;
         const columns = GlobalConfig.TOTAL_COLUMNS;
 
-        this.buttonSize = 600 / GlobalConfig.TOTAL_COLUMNS;
-
         this.winContainer.position.set(
-            (this.buttonSize * GlobalConfig.TOTAL_ROWS - this.winContainer.width) / 2,
-            (this.buttonSize * GlobalConfig.TOTAL_ROWS - this.winContainer.height) / 2
+            (buttonSize.width * rows - this.winContainer.width) / 2,
+            (buttonSize.height * columns - this.winContainer.height) / 2
         );
 
         for (let i = 0; i < rows; i++) {
             this.buttons[i] = [];
-            const columnContainer = new Container({ x: i * this.buttonSize, y: 0 });
+            const columnContainer = new Container({ x: i * buttonSize.width, y: 0 });
             for (let j = 0; j < columns; j++) {
-                const button = new Button({ width: this.buttonSize, height: this.buttonSize });
-                button.defaultView = this.getButtonView('button.png');
+                const button = new Button({ width: buttonSize.width, height: buttonSize.height });
+                button.defaultView = this.getButtonView('tile.png');
                 button.anchor.set(0, 0);
-                button.setSize(this.buttonSize, this.buttonSize);
 
                 // Adjust the position
-                button.y = j * this.buttonSize;
+                button.y = j * buttonSize.height;
 
                 // Handle onclick event
                 button.onPress.connect(() => this.onPress(button, i, j));
@@ -109,7 +111,7 @@ export class BoardContainer extends Container {
             this.reavealAllButtons();
         }
 
-        btn.setSize(this.buttonSize, this.buttonSize);
+        btn.setSize(buttonSize.width, buttonSize.height);
         btn.pressed = true;
     }
 
@@ -225,7 +227,7 @@ export class BoardContainer extends Container {
                 this.buttons[i][j].alpha = this.isAuto && this.buttons[i][j].pressed ? 0.75 : 1;
                 this.buttons[i][j].defaultView = this.getButtonView("button.png");
 
-                this.buttons[i][j].setSize(this.buttonSize, this.buttonSize);
+                this.buttons[i][j].setSize(buttonSize.width, buttonSize.height);
             }
         }
     }
@@ -251,7 +253,7 @@ export class BoardContainer extends Container {
                 }
 
                 this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.35;
-                this.buttons[i][j].setSize(this.buttonSize, this.buttonSize);
+                this.buttons[i][j].setSize(buttonSize.width, buttonSize.height);
             }
         }
 

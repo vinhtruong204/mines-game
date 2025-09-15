@@ -9,6 +9,23 @@
       "assets": [
         {
           "alias": [
+            "main/custom/BG.png",
+            "BG.png"
+          ],
+          "src": [
+            "main/custom/BG@0.5x.webp",
+            "main/custom/BG@0.5x.png",
+            "main/custom/BG.webp",
+            "main/custom/BG.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "main/custom/bomb.png",
             "bomb.png"
           ],
@@ -51,6 +68,23 @@
             "main/custom/select@0.5x.png",
             "main/custom/select.webp",
             "main/custom/select.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "main/custom/tile.png",
+            "tile.png"
+          ],
+          "src": [
+            "main/custom/tile@0.5x.webp",
+            "main/custom/tile@0.5x.png",
+            "main/custom/tile.webp",
+            "main/custom/tile.png"
           ],
           "data": {
             "tags": {

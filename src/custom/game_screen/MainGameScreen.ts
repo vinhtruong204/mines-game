@@ -1,13 +1,21 @@
-import { Container, Ticker } from "pixi.js";
+import { Container, Sprite, Ticker } from "pixi.js";
 import { engine } from "../../app/getEngine";
 import { UIManager } from "../manager_ui/UIManager";
 import { BoardContainer } from "../_game/board/BoardContainer";
+
+const safeZoneSize = {
+    width: 720,
+    height: 140
+}
+
+const boardOffsetY = 424;
 
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
     public static assetBundles = ["main"];
 
     private paused = false;
+    private bg: Sprite;
 
     // Board container
     private boardContainer: BoardContainer;
@@ -20,10 +28,10 @@ export class MainGameScreen extends Container {
 
         this.boardContainer = new BoardContainer();
 
-        // this.uiManager = new UIManager(this.boardContainer.x, this.boardContainer.y + this.boardContainer.height);
         this.uiManager = new UIManager();
 
-        this.addChild(this.boardContainer, this.uiManager);
+        this.bg = Sprite.from(`BG.png`);
+        this.addChild(this.bg, this.boardContainer);
     }
 
 
@@ -53,14 +61,16 @@ export class MainGameScreen extends Container {
 
     /** Resize the screen, fired whenever window size changes */
     public resize(width: number, height: number) {
-        const centerX = (width - this.boardContainer.width) * 0.5;
+        const centerX = (width - this.bg.width) * 0.5;
         const centerY = (height - this.boardContainer.height) * 0.5;
 
         // Center the board when window size change
-        this.boardContainer.position.set(centerX, 30);
+        this.boardContainer.position.set(centerX + 50, boardOffsetY - safeZoneSize.height);
 
         const uiManagerOffsetX = (this.boardContainer.width - this.uiManager.width) / 2;
         this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height);
+
+        this.bg.position.set(centerX, -safeZoneSize.height);
     }
 
     /** Show screen with animations */
