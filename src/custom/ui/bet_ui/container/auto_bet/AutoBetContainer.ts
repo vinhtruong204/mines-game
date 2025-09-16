@@ -1,19 +1,20 @@
-import { Button } from "../../../../app/ui/Button";
+
 import { LabeledInput } from "../../base/LabeledInput";
 import { BetContainer } from "../BetContainer";
 import { CustomLabelInput } from "./CustomLabelInput";
 import { InputNumberOfGames } from "./InputNumberOfGames";
 import { CustomInputStopAuto } from "./CustomInputStopAuto";
 import { InputBetAmount } from "../../bet_amount/InputBetAmount";
-import { globalEmitter } from "../../../events/GlobalEmitter";
-import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
-import { AutoBettingEvent } from "../../../events/auto_betting_events/AutoBettingEvent";
-import { WinContainerEvent } from "../../../events/WinContainerEvent";
-import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
-import { GameStateManager } from "../../../manage_game_states/GameStateManager";
-import { GameState } from "../../../manage_game_states/GameState";
-import { engine } from "../../../../app/getEngine";
 import { FederatedPointerEvent, FederatedWheelEvent } from "pixi.js";
+import { engine } from "../../../../../app/getEngine";
+import { AutoBettingEvent } from "../../../../events/auto_betting_events/AutoBettingEvent";
+import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
+import { globalEmitter } from "../../../../events/GlobalEmitter";
+import { WinContainerEvent } from "../../../../events/WinContainerEvent";
+import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
+import { GameState } from "../../../../manage_game_states/GameState";
+import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
+import { Button } from "../../../../../app/ui/Button";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 

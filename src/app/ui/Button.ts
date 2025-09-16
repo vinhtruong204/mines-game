@@ -1,6 +1,7 @@
 import { FancyButton } from "@pixi/ui";
 
 import { Label } from "./Label";
+import { Spine } from "@esotericsoftware/spine-pixi-v8";
 
 const defaultButtonOptions = {
   text: "",
@@ -16,12 +17,7 @@ type ButtonOptions = typeof defaultButtonOptions;
  */
 export class Button extends FancyButton {
   private _pressed: boolean = false;
-  get pressed(): boolean {
-    return this._pressed;
-  }
-  set pressed(value: boolean) {
-    this._pressed = value;
-  }
+  private tileSpine: Spine;
 
   constructor(options: Partial<ButtonOptions> = {}) {
     const opts = { ...defaultButtonOptions, ...options };
@@ -43,9 +39,19 @@ export class Button extends FancyButton {
       scale: 0.9,
     });
 
+    this.tileSpine = Spine.from({skeleton: "tile.skel", atlas: "tile.atlas"});
+    this.tileSpine.position.set(0, 0);
     this.width = opts.width;
     this.height = opts.height;
 
+    this.addChild(this.tileSpine);
   }
 
+  get pressed(): boolean {
+    return this._pressed;
+  }
+
+  set pressed(value: boolean) {
+    this._pressed = value;
+  }
 }

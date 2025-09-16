@@ -1,4 +1,4 @@
-import { GameMode } from "../bet_ui/mines_ui/GameMode";
+import { GameMode } from "../ui/bet_ui/mines_ui/GameMode";
 
 export class GetNumberOfMines {
     public static getNumberOfMines(gameMode: GameMode): number {

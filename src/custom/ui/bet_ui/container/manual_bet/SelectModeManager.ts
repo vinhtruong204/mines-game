@@ -1,6 +1,6 @@
 import { Container, Text } from "pixi.js";
 import { GameMode, GameModeLabel } from "../../mines_ui/GameMode";
-import { Button } from "../../../../app/ui/Button";
+import { Button } from "../../../../../app/ui/Button";
 
 export class SelectModeManager extends Container {
     private leftLabel: Text;

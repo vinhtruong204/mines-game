@@ -1,9 +1,9 @@
 import { Container, Graphics } from "pixi.js";
 import { ChildCapsule } from "./ChildCapsule";
 import { CapsuleType } from "./CapsuleType";
-import { globalEmitter } from "../events/GlobalEmitter";
-import { GameStateEvent } from "../events/game_states/GameStateEvent";
-import { GameState } from "../manage_game_states/GameState";
+import { GameStateEvent } from "../../events/game_states/GameStateEvent";
+import { globalEmitter } from "../../events/GlobalEmitter";
+import { GameState } from "../../manage_game_states/GameState";
 
 export class ContainerCapsule extends Container {
     private capsuleWidth = 500;

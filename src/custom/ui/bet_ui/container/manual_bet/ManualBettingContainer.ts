@@ -1,10 +1,10 @@
 import { Container, Graphics } from "pixi.js";
 import { CustomInputBase } from "../../base/CustomInputBase";
 import { LabeledInput } from "../../base/LabeledInput";
-import { Button } from "../../../../app/ui/Button";
-import { globalEmitter } from "../../../events/GlobalEmitter";
-import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
-import { ItemType } from "../../../_game/board/ItemType";
+import { Button } from "../../../../../app/ui/Button";
+import { ItemType } from "../../../../_game/board/ItemType";
+import { globalEmitter } from "../../../../events/GlobalEmitter";
+import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 
 const defaultInputFieldSize = {
     width: 350,

@@ -1,11 +1,11 @@
 import { Graphics } from "pixi.js";
 import { CustomInputBase } from "../../base/CustomInputBase";
 import { LabeledInput } from "../../base/LabeledInput";
-import { Button } from "../../../../app/ui/Button";
+import { Button } from "../../../../../app/ui/Button";
+import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
+import { globalEmitter } from "../../../../events/GlobalEmitter";
+import { GameState } from "../../../../manage_game_states/GameState";
 import { TriangleType } from "../../base/TriangleSprite";
-import { globalEmitter } from "../../../events/GlobalEmitter";
-import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
-import { GameState } from "../../../manage_game_states/GameState";
 
 const defaultInputFieldSize = {
     width: 530,

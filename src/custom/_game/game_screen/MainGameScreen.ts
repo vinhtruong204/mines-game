@@ -1,7 +1,7 @@
 import { Container, Sprite, Ticker } from "pixi.js";
-import { UIManager } from "../manager_ui/UIManager";
-import { BoardContainer } from "../_game/board/BoardContainer";
-import { engine } from "../../app/getEngine";
+import { UIManager } from "../../ui/manager_ui/UIManager";
+import { BoardContainer } from "../board/BoardContainer";
+import { engine } from "../../../app/getEngine";
 
 const safeZoneSize = {
     width: 720,

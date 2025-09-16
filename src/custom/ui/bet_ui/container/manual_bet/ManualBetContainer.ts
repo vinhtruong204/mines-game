@@ -1,13 +1,14 @@
-import { Button } from "../../../../app/ui/Button";
-import { ItemType } from "../../../_game/board/ItemType";
-import { GlobalConfig } from "../../../config/GlobalConfig";
-import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
-import { globalEmitter } from "../../../events/GlobalEmitter";
-import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
-import { WinContainerEvent } from "../../../events/WinContainerEvent";
-import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
-import { GameState } from "../../../manage_game_states/GameState";
-import { GameStateManager } from "../../../manage_game_states/GameStateManager";
+
+import { Button } from "../../../../../app/ui/Button";
+import { ItemType } from "../../../../_game/board/ItemType";
+import { GlobalConfig } from "../../../../config/GlobalConfig";
+import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
+import { globalEmitter } from "../../../../events/GlobalEmitter";
+import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
+import { WinContainerEvent } from "../../../../events/WinContainerEvent";
+import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
+import { GameState } from "../../../../manage_game_states/GameState";
+import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
