@@ -1,13 +1,11 @@
 import { FancyButton } from "@pixi/ui";
 
-import { engine } from "../getEngine";
-
 import { Label } from "./Label";
 
 const defaultButtonOptions = {
   text: "",
-  width: 301,
-  height: 112,
+  width: 128,
+  height: 110,
   fontSize: 28,
 };
 
@@ -29,7 +27,7 @@ export class Button extends FancyButton {
     const opts = { ...defaultButtonOptions, ...options };
 
     super({
-      defaultView: "button.png",
+      defaultView: "tile.png",
       nineSliceSprite: [38, 50, 38, 50],
       anchor: 0,
       text: new Label({
@@ -48,15 +46,6 @@ export class Button extends FancyButton {
     this.width = opts.width;
     this.height = opts.height;
 
-    this.onDown.connect(this.handleDown.bind(this));
-    this.onHover.connect(this.handleHover.bind(this));
   }
 
-  private handleHover() {
-    engine().audio.sfx.play("main/sounds/sfx-hover.wav");
-  }
-
-  private handleDown() {
-    engine().audio.sfx.play("main/sounds/sfx-press.wav");
-  }
 }

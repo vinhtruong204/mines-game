@@ -1,7 +1,7 @@
 import { Container, Sprite, Ticker } from "pixi.js";
-import { engine } from "../../app/getEngine";
 import { UIManager } from "../manager_ui/UIManager";
 import { BoardContainer } from "../_game/board/BoardContainer";
+import { engine } from "../../app/getEngine";
 
 const safeZoneSize = {
     width: 720,
@@ -12,7 +12,7 @@ const boardOffsetY = 424;
 
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
-    public static assetBundles = ["main"];
+    // public static assetBundles = ["main"];
 
     private paused = false;
     private bg: Sprite;
@@ -30,7 +30,7 @@ export class MainGameScreen extends Container {
 
         this.uiManager = new UIManager();
 
-        this.bg = Sprite.from(`BG.png`);
+        this.bg = Sprite.from(`bg.jpg`);
         this.addChild(this.bg, this.boardContainer);
     }
 
@@ -75,7 +75,7 @@ export class MainGameScreen extends Container {
 
     /** Show screen with animations */
     public async show(): Promise<void> {
-        engine().audio.bgm.play("main/sounds/bgm-main.mp3", { volume: 0.5 });
+        // engine().audio.bgm.play("main/sounds/bgm-main.mp3", { volume: 0.5 });
 
         // const elementsToAnimate = [
         //   this.settingsButton,
