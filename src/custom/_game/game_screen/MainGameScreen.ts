@@ -2,6 +2,7 @@ import { Container, Sprite, Ticker } from "pixi.js";
 import { UIManager } from "../../ui/manager_ui/UIManager";
 import { BoardContainer } from "../board/BoardContainer";
 import { engine } from "../../../app/getEngine";
+import { Spine } from "@esotericsoftware/spine-pixi-v8";
 
 const safeZoneSize = {
     width: 720,
@@ -10,12 +11,18 @@ const safeZoneSize = {
 
 const boardOffsetY = 424;
 
+const bgSpineOffset = {
+    x: 350,
+    y: 800
+}
+
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
     // public static assetBundles = ["main"];
 
     private paused = false;
     private bg: Sprite;
+    private bgSpine: Spine;
 
     // Board container
     private boardContainer: BoardContainer;
@@ -31,7 +38,12 @@ export class MainGameScreen extends Container {
         this.uiManager = new UIManager();
 
         this.bg = Sprite.from(`bg.jpg`);
-        this.addChild(this.bg, this.boardContainer);
+        this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
+        this.bgSpine.state.setAnimation(0, "idle", true);
+        // console.log(this.bgSpine.skeleton.data.animations.map(item => item.name));
+
+        this.addChild(this.bg, this.bgSpine, this.boardContainer);
+
     }
 
 
@@ -71,6 +83,7 @@ export class MainGameScreen extends Container {
         this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height);
 
         this.bg.position.set(centerX, -safeZoneSize.height);
+        this.bgSpine.position.set(this.bg.position.x + bgSpineOffset.x, this.bg.position.y + bgSpineOffset.y);
     }
 
     /** Show screen with animations */

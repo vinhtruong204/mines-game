@@ -31,11 +31,11 @@
           "src": "main/sounds/bgm-main.mp3"
         },
         {
-          "alias": "background.atlas",
+          "alias": "bg.atlas",
           "src": "main/anim/bg/background.atlas"
         },
         {
-          "alias": "background.skel",
+          "alias": "bg.skel",
           "src": "main/anim/bg/background.skel"
         },
         {
