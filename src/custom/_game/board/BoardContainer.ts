@@ -1,5 +1,4 @@
 import { Container, Sprite, Ticker } from "pixi.js";
-import { Button } from "../../../app/ui/Button";
 import { ItemType } from "./ItemType";
 import { GetItem } from "../../get_data/GetItem";
 import { globalEmitter } from "../../events/GlobalEmitter";
@@ -13,16 +12,22 @@ import { WinContainerEvent } from "../../events/WinContainerEvent";
 import { GlobalConfig } from "../../config/GlobalConfig";
 import { GameState } from "../../manage_game_states/GameState";
 import { GameStateManager } from "../../manage_game_states/GameStateManager";
+import { Tile } from "../../ui/custom_ui/Tile";
 
-const buttonSize = {
+const tileSize = {
     width: 128,
     height: 110
 }
 
+const offsetTileBoard = {
+    x: 50,
+    y: 40
+}
+
 export class BoardContainer extends Container {
-    // private buttonSize: number = 0;
-    private buttons: Button[][] = [];
-    private buttonPressedAutoCount: number = 0;
+    // private TileSize: number = 0;
+    private tiles: Tile[][] = [];
+    private TilePressedAutoCount: number = 0;
 
     // Variables for the auto
     private isAuto: boolean = false;
@@ -58,77 +63,84 @@ export class BoardContainer extends Container {
         const columns = GlobalConfig.TOTAL_COLUMNS;
 
         this.winContainer.position.set(
-            (buttonSize.width * rows - this.winContainer.width) / 2,
-            (buttonSize.height * columns - this.winContainer.height) / 2
+            (tileSize.width * rows - this.winContainer.width) / 2,
+            (tileSize.height * columns - this.winContainer.height) / 2
         );
 
         for (let i = 0; i < rows; i++) {
-            this.buttons[i] = [];
-            const columnContainer = new Container({ x: i * buttonSize.width, y: 0 });
+            this.tiles[i] = [];
+            const columnContainer = new Container({ x: i * tileSize.width + offsetTileBoard.x, y: offsetTileBoard.y });
             for (let j = 0; j < columns; j++) {
-                const button = new Button({ width: buttonSize.width, height: buttonSize.height });
-                button.defaultView = this.getButtonView('tile.png');
-                button.anchor.set(0, 0);
+                const tile = new Tile();
+                // tile.defaultView = this.getTileView('tile.png');
+                // Tile.anchor.set(0, 0);
+
+                tile.handleAppear();
 
                 // Adjust the position
-                button.y = j * buttonSize.height;
+                tile.y = j * tileSize.height;
 
                 // Handle onclick event
-                button.onPress.connect(() => this.onPress(button, i, j));
+                tile.onPress.connect(() => this.onPress(tile, i, j));
 
-                columnContainer.addChild(button);
-                this.buttons[i][j] = button;
+                columnContainer.addChild(tile);
+                this.tiles[i][j] = tile;
             }
             this.addChild(columnContainer);
         }
     }
 
-    private async onPress(btn: Button, i: number, j: number) {
+    private async onPress(tile: Tile, i: number, j: number) {
+        let itemTypeTest = await GetItem.getItemType(i, j);
+        console.log(itemTypeTest);
+        tile.handleOpen(itemTypeTest);
         // Seperate logic for the auto mode 
         if (this.isAuto) {
-            this.onPressAutoMode(btn);
+            this.onPressAutoMode(tile);
             return;
         }
 
-        // Stop if the game isn't start and button pressed before
+        // Stop if the game isn't start and Tile pressed before
         if (!GameStateManager.getInstance().isBetting()) return;
-        if (btn.pressed) return;
+        if (tile.pressed) return;
 
         let itemType = await GetItem.getItemType(i, j);
+
+        tile.handleOpen(itemType);
 
         // Raise event to update UI
         globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType);
 
         // Update default view
-        if (itemType === ItemType.DIAMOND)
-            btn.defaultView = this.getButtonView("diamond.png");
-        else if (itemType === ItemType.MINE) {
-            btn.defaultView = this.getButtonView("bomb.png");
+        if (itemType === ItemType.DIAMOND) {
+            // btn.defaultView = this.getTileView("diamond.png");
+        } else if (itemType === ItemType.MINE) {
+            // btn.defaultView = this.getTileView("bomb.png");
 
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-            // Reveal all the buttons
-            this.reavealAllButtons();
+            // Reveal all the Tiles
+            this.reavealAllTiles();
         }
 
-        btn.setSize(buttonSize.width, buttonSize.height);
-        btn.pressed = true;
+        tile.setSize(tileSize.width, tileSize.height);
+        tile.pressed = true;
     }
 
-    private onPressAutoMode(btn: Button) {
+    private onPressAutoMode(tile: Tile) {
         if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
-        if (!btn.pressed) {
-            btn.pressed = true;
-            btn.alpha = 0.75;
-            this.buttonPressedAutoCount++;
+        if (!tile.pressed) {
+            tile.pressed = true;
+            tile.alpha = 0.75;
+            this.TilePressedAutoCount++;
         } else {
-            btn.pressed = false;
-            btn.alpha = 1;
-            this.buttonPressedAutoCount--;
+            tile.pressed = false;
+            tile.alpha = 1;
+            this.TilePressedAutoCount--;
         }
 
-        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.buttonPressedAutoCount);
+        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.TilePressedAutoCount);
     }
 
     private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
@@ -142,18 +154,18 @@ export class BoardContainer extends Container {
                 // Generate the matrix
                 GetItem.generateMatrix(mines);
 
-                // Reset all the buttons
-                this.resetAllButtons();
+                // Reset all the Tiles
+                this.resetAllTiles();
             }
         }
         else if (state === GameState.NOT_BETTING) {
             if (this.isAuto) {
-                this.resetAllButtons();
+                this.resetAllTiles();
                 this.ticker.stop();
                 return;
             }
 
-            this.reavealAllButtons();
+            this.reavealAllTiles();
         }
     }
 
@@ -174,12 +186,12 @@ export class BoardContainer extends Container {
             if (elapsed >= 1000) {
                 if (phase === PhaseAuto.REVEAL) {
                     GetItem.generateMatrix(mines);
-                    this.reavealAllButtons();
+                    this.reavealAllTiles();
                     phase = PhaseAuto.RESET;
                 }
                 else if (phase === PhaseAuto.RESET) {
                     this.disableWinContainer();
-                    this.resetAllButtons();
+                    this.resetAllTiles();
                     phase = PhaseAuto.REVEAL;
 
                     if (numberOfGames !== 0) {
@@ -216,44 +228,44 @@ export class BoardContainer extends Container {
         globalEmitter.emit(WinContainerEvent.DIASABLE);
     }
 
-    private resetAllButtons(isTheFirstTime: boolean = false) {
-        for (let i = 0; i < this.buttons.length; i++) {
-            for (let j = 0; j < this.buttons[i].length; j++) {
+    private resetAllTiles(isTheFirstTime: boolean = false) {
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
 
                 // If is not auto or the first time switch to auto mode
                 if (!this.isAuto || isTheFirstTime)
-                    this.buttons[i][j].pressed = false;
+                    this.tiles[i][j].pressed = false;
 
-                this.buttons[i][j].alpha = this.isAuto && this.buttons[i][j].pressed ? 0.75 : 1;
-                this.buttons[i][j].defaultView = this.getButtonView("button.png");
+                this.tiles[i][j].alpha = this.isAuto && this.tiles[i][j].pressed ? 0.75 : 1;
+                // this.tiles[i][j].defaultView = this.getTileView("Tile.png");
 
-                this.buttons[i][j].setSize(buttonSize.width, buttonSize.height);
+                this.tiles[i][j].setSize(tileSize.width, tileSize.height);
             }
         }
     }
 
-    private async reavealAllButtons() {
+    private async reavealAllTiles() {
         this.diamondCount = 0;
         this.mineCount = 0;
 
-        for (let i = 0; i < this.buttons.length; i++) {
-            for (let j = 0; j < this.buttons[i].length; j++) {
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
                 const item = await GetItem.getItemType(i, j);
                 if (item === ItemType.DIAMOND) {
-                    this.buttons[i][j].defaultView = this.getButtonView("diamond.png");
+                    // this.tiles[i][j].defaultView = this.getTileView("diamond.png");
 
                     // Increase diamond count
-                    if (this.buttons[i][j].pressed) this.diamondCount++;
+                    if (this.tiles[i][j].pressed) this.diamondCount++;
                 }
                 else if (item === ItemType.MINE) {
-                    this.buttons[i][j].defaultView = this.getButtonView("bomb.png");
+                    // this.tiles[i][j].defaultView = this.getTileView("bomb.png");
 
                     // Increase mine count
-                    if (this.buttons[i][j].pressed) this.mineCount++;
+                    if (this.tiles[i][j].pressed) this.mineCount++;
                 }
 
-                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.35;
-                this.buttons[i][j].setSize(buttonSize.width, buttonSize.height);
+                this.tiles[i][j].alpha = this.tiles[i][j].pressed ? 1 : 0.35;
+                this.tiles[i][j].setSize(tileSize.width, tileSize.height);
             }
         }
 
@@ -262,17 +274,17 @@ export class BoardContainer extends Container {
     }
 
 
-    private getButtonView(path: string): Sprite {
+    private getTileView(path: string): Sprite {
         let sprite = Sprite.from(path);
         return sprite;
     }
 
     private async onPickRandom() {
-        const available: { btn: Button; i: number; j: number }[] = [];
+        const available: { btn: Tile; i: number; j: number }[] = [];
 
-        for (let i = 0; i < this.buttons.length; i++) {
-            for (let j = 0; j < this.buttons[i].length; j++) {
-                const btn = this.buttons[i][j];
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
+                const btn = this.tiles[i][j];
                 if (!btn.pressed) {
                     available.push({ btn, i, j });
                 }
@@ -281,29 +293,29 @@ export class BoardContainer extends Container {
 
         if (available.length === 0) return;
 
-        // Random one button
+        // Random one Tile
         const randomIndex = Math.floor(Math.random() * available.length);
         const { btn, i, j } = available[randomIndex];
 
-        // Call onpress to handle random button clicked
+        // Call onpress to handle random Tile clicked
         this.onPress(btn, i, j);
     }
 
     private onAutoModeStart() {
         this.isAuto = true;
 
-        this.buttonPressedAutoCount = 0;
+        this.TilePressedAutoCount = 0;
 
         // Reset the board
-        this.resetAllButtons(true);
+        this.resetAllTiles(true);
     }
 
     private onAutoModeStop() {
         this.isAuto = false;
 
-        this.resetAllButtons();
+        this.resetAllTiles();
 
-        // Reset button press count
-        this.buttonPressedAutoCount = 0;
+        // Reset Tile press count
+        this.TilePressedAutoCount = 0;
     }
 }
