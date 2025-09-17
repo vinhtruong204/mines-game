@@ -27,6 +27,7 @@ const offsetTileBoard = {
 export class BoardContainer extends Container {
     // private TileSize: number = 0;
     private tiles: Tile[][] = [];
+    private tilesAPI: Tile[] = [];
     private TilePressedAutoCount: number = 0;
 
     // Variables for the auto
@@ -70,12 +71,9 @@ export class BoardContainer extends Container {
 
         for (let i = 0; i < rows; i++) {
             this.tiles[i] = [];
-            // const columnContainer = new Container({ x: i * tileSize.width + offsetTileBoard.x, y: offsetTileBoard.y });
 
             for (let j = 0; j < columns; j++) {
                 const tile = new Tile();
-                // tile.defaultView = this.getTileView('tile.png');
-                // Tile.anchor.set(0, 0);
 
                 tile.handleAppear();
 
@@ -89,8 +87,10 @@ export class BoardContainer extends Container {
                 this.addChild(tile);
                 this.tiles[i][j] = tile;
             }
-            // this.addChild(columnContainer);
         }
+
+        this.tilesAPI = this.tiles.flat();
+        // console.log(this.tilesAPI);
     }
 
     private async onPress(tile: Tile, i: number, j: number) {
