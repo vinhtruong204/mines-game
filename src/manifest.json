@@ -45,6 +45,14 @@
         {
           "alias": "tile.skel",
           "src": "main/anim/tile/tile.skel"
+        },
+        {
+          "alias": "button.png",
+          "src": "main/ui/button.png"
+        },
+        {
+          "alias": "rounded-rectangle.png",
+          "src": "main/ui/rounded-rectangle.png"
         }
       ]
     },

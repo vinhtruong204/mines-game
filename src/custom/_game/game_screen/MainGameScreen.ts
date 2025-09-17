@@ -3,6 +3,8 @@ import { UIManager } from "../../ui/manager_ui/UIManager";
 import { BoardContainer } from "../board/BoardContainer";
 import { engine } from "../../../app/getEngine";
 import { Spine } from "@esotericsoftware/spine-pixi-v8";
+import { PausePopup } from "../../../app/popups/PausePopup";
+import { Button } from "../../../app/ui/Button";
 
 const safeZoneSize = {
     width: 720,
@@ -12,8 +14,8 @@ const safeZoneSize = {
 const boardOffsetY = 424;
 
 const bgSpineOffset = {
-    x: 350,
-    y: 800
+    x: 360,
+    y: 790
 }
 
 export class MainGameScreen extends Container {
@@ -30,6 +32,7 @@ export class MainGameScreen extends Container {
     // UI Manager
     private uiManager: UIManager;
 
+
     constructor() {
         super();
 
@@ -40,10 +43,24 @@ export class MainGameScreen extends Container {
         this.bg = Sprite.from(`bg.jpg`);
         this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
         this.bgSpine.state.setAnimation(0, "idle", true);
-        // console.log(this.bgSpine.skeleton.data.animations.map(item => item.name));
+        // console.log(this.bgSpine.skeleton.data.animations);
 
-        this.addChild(this.bg, this.bgSpine, this.boardContainer);
+        const button = new Button({
+            text: 'Show Popup',
+            fontSize: 40,
+            width: 300,
+            height: 100
+        });
 
+        button.onPress.connect(this.showPopup);
+
+        this.addChild(this.bg, this.bgSpine, this.boardContainer, button);
+
+    }
+
+    private showPopup() {
+        // console.log("show popup");
+        engine().navigation.presentPopup(PausePopup);
     }
 
 

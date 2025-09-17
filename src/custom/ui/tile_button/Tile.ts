@@ -24,7 +24,7 @@ export class Tile extends ButtonContainer {
 
         this.tileSpine = Spine.from({ skeleton: "tile.skel", atlas: "tile.atlas" });
 
-        console.log(this.tileSpine.skeleton.data.animations.map(item => item.name));
+        // console.log(this.tileSpine.skeleton.data.animations.map(item => item.name));
         this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
 
         this.addChild(this.tileSpine);

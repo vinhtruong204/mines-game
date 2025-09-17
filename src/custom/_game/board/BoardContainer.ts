@@ -1,4 +1,4 @@
-import { Container, Sprite, Ticker } from "pixi.js";
+import { Container, Ticker } from "pixi.js";
 import { ItemType } from "./ItemType";
 import { GetItem } from "../../get_data/GetItem";
 import { globalEmitter } from "../../events/GlobalEmitter";
@@ -12,7 +12,7 @@ import { WinContainerEvent } from "../../events/WinContainerEvent";
 import { GlobalConfig } from "../../config/GlobalConfig";
 import { GameState } from "../../manage_game_states/GameState";
 import { GameStateManager } from "../../manage_game_states/GameStateManager";
-import { Tile } from "../../ui/custom_ui/Tile";
+import { Tile } from "../../ui/tile_button/Tile";
 
 const tileSize = {
     width: 128,
@@ -51,6 +51,7 @@ export class BoardContainer extends Container {
 
         this.winContainer = new WinContainer();
 
+        this.sortableChildren = true;
         this.initBoard();
 
         this.addChild(this.winContainer);
@@ -69,7 +70,8 @@ export class BoardContainer extends Container {
 
         for (let i = 0; i < rows; i++) {
             this.tiles[i] = [];
-            const columnContainer = new Container({ x: i * tileSize.width + offsetTileBoard.x, y: offsetTileBoard.y });
+            // const columnContainer = new Container({ x: i * tileSize.width + offsetTileBoard.x, y: offsetTileBoard.y });
+
             for (let j = 0; j < columns; j++) {
                 const tile = new Tile();
                 // tile.defaultView = this.getTileView('tile.png');
@@ -78,21 +80,23 @@ export class BoardContainer extends Container {
                 tile.handleAppear();
 
                 // Adjust the position
-                tile.y = j * tileSize.height;
+                tile.position.set(j * tileSize.width + offsetTileBoard.x, i * tileSize.height + offsetTileBoard.y);
 
                 // Handle onclick event
                 tile.onPress.connect(() => this.onPress(tile, i, j));
+                tile.onOut.connect(() => tile.zIndex = 0);
 
-                columnContainer.addChild(tile);
+                this.addChild(tile);
                 this.tiles[i][j] = tile;
             }
-            this.addChild(columnContainer);
+            // this.addChild(columnContainer);
         }
     }
 
     private async onPress(tile: Tile, i: number, j: number) {
+        tile.zIndex = 99;
         let itemTypeTest = await GetItem.getItemType(i, j);
-        console.log(itemTypeTest);
+        // console.log(itemTypeTest);
         tile.handleOpen(itemTypeTest);
         // Seperate logic for the auto mode 
         if (this.isAuto) {
@@ -271,12 +275,6 @@ export class BoardContainer extends Container {
 
         // console.log(this.diamondCount, this.mineCount);
         this.checkGameResult();
-    }
-
-
-    private getTileView(path: string): Sprite {
-        let sprite = Sprite.from(path);
-        return sprite;
     }
 
     private async onPickRandom() {

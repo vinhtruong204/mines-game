@@ -3,10 +3,10 @@ import { GlobalConfig } from "../config/GlobalConfig";
 
 export class GetItem {
   private static mockData: number[][] = [
+    [0, 1, 1, 1, 1],
     [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
+    [1, 0, 1, 0, 1],
+    [1, 1, 0, 1, 1],
     [0, 1, 1, 1, 1],
   ];
 
@@ -41,7 +41,7 @@ export class GetItem {
   public static async getItemType(i: number, j: number): Promise<ItemType> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(this.mockData[j][i]);
+        resolve(this.mockData[i][j]);
       }, 0);
     });
   }
