@@ -3,8 +3,8 @@ import { UIManager } from "../../ui/manager_ui/UIManager";
 import { BoardContainer } from "../board/BoardContainer";
 import { engine } from "../../../app/getEngine";
 import { Spine } from "@esotericsoftware/spine-pixi-v8";
-import { PausePopup } from "../../../app/popups/PausePopup";
 import { Button } from "../../../app/ui/Button";
+import { SettingsPopup } from "../../../app/popups/SettingsPopup";
 
 const safeZoneSize = {
     width: 720,
@@ -54,13 +54,13 @@ export class MainGameScreen extends Container {
 
         button.onPress.connect(this.showPopup);
 
-        this.addChild(this.bg, this.bgSpine, this.boardContainer, button);
+        this.addChild(this.bg, this.bgSpine, this.boardContainer, this.uiManager);
 
     }
 
     private showPopup() {
         // console.log("show popup");
-        engine().navigation.presentPopup(PausePopup);
+        engine().navigation.presentPopup(SettingsPopup);
     }
 
 
@@ -92,15 +92,17 @@ export class MainGameScreen extends Container {
     public resize(width: number, height: number) {
         const centerX = (width - this.bg.width) * 0.5;
         const centerY = (height - this.boardContainer.height) * 0.5;
+        centerY;
 
         // Center the board when window size change
         this.boardContainer.position.set(centerX + 50, boardOffsetY - safeZoneSize.height);
 
         const uiManagerOffsetX = (this.boardContainer.width - this.uiManager.width) / 2;
-        this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height);
-
+        this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height + 150);
+        
         this.bg.position.set(centerX, -safeZoneSize.height);
         this.bgSpine.position.set(this.bg.position.x + bgSpineOffset.x, this.bg.position.y + bgSpineOffset.y);
+
     }
 
     /** Show screen with animations */

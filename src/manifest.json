@@ -53,6 +53,14 @@
         {
           "alias": "rounded-rectangle.png",
           "src": "main/ui/rounded-rectangle.png"
+        },
+        {
+          "alias": "switch-bg-on.png",
+          "src": "main/ui/switch-bg-on.png"
+        },
+        {
+          "alias": "switch-bg-off.png",
+          "src": "main/ui/switch-bg-off.png"
         }
       ]
     },

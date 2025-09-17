@@ -302,16 +302,27 @@ export class BoardContainer extends Container {
     private onAutoModeStart() {
         this.isAuto = true;
 
+        this.changeTileColor();
+
+
         this.TilePressedAutoCount = 0;
 
         // Reset the board
-        this.resetAllTiles(true);
+        // this.resetAllTiles(true);
+    }
+
+    private changeTileColor() {
+        this.tilesAPI.forEach(item => {
+            item.handleSwitchMode(this.isAuto);
+        });
     }
 
     private onAutoModeStop() {
         this.isAuto = false;
 
-        this.resetAllTiles();
+        this.changeTileColor();
+
+        // this.resetAllTiles();
 
         // Reset Tile press count
         this.TilePressedAutoCount = 0;

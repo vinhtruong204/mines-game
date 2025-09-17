@@ -16,6 +16,7 @@ export enum TileAnimation {
 }
 
 export class Tile extends ButtonContainer {
+    private itemType: ItemType = ItemType.DIAMOND;
     private _pressed: boolean = false;
 
     private tileSpine: Spine;
@@ -23,6 +24,9 @@ export class Tile extends ButtonContainer {
         super();
 
         this.tileSpine = Spine.from({ skeleton: "tile.skel", atlas: "tile.atlas" });
+
+        this.tileSpine.state.data.setMix(TileAnimation.COLOR_BLUE, TileAnimation.COLOR_PURPLE, 0.25);
+        this.tileSpine.state.data.setMix(TileAnimation.COLOR_PURPLE, TileAnimation.COLOR_BLUE, 0.25);
 
         // console.log(this.tileSpine.skeleton.data.animations.map(item => item.name));
         this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
@@ -32,9 +36,26 @@ export class Tile extends ButtonContainer {
 
     public handleAppear() {
         this.tileSpine.state.setAnimation(1, TileAnimation.ALL_APPEAR, false);
+        // this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
+        // this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
+    }
+
+    public handleDisAppear() {
+        switch (this.itemType) {
+            case ItemType.DIAMOND:
+                this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
+                break;
+            case ItemType.MINE:
+                this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
+                break;
+            default:
+                break;
+        }
     }
 
     public handleOpen(itemType: ItemType) {
+        this.itemType = itemType;
+
         if (itemType === ItemType.DIAMOND) {
             const crownAppear = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_APPEAR, false);
             crownAppear.listener = {
@@ -56,6 +77,19 @@ export class Tile extends ButtonContainer {
                 }
             }
         }
+    }
+
+    public handleSwitchMode(isAuto: boolean) {
+        if (!isAuto) {
+            this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
+            // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_BLUE, false, 0);
+
+        }
+        else {
+            this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_PURPLE, false);
+            // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_PURPLE, false, 0);
+        }
+
     }
 
     get pressed(): boolean {

@@ -1,4 +1,4 @@
-import { List } from "@pixi/ui";
+import { List, Switcher } from "@pixi/ui";
 import { animate } from "motion";
 import type { Text } from "pixi.js";
 import { BlurFilter, Container, Sprite, Texture } from "pixi.js";
@@ -25,13 +25,14 @@ export class SettingsPopup extends Container {
   /** The build version label */
   private versionLabel: Text;
   /** Layout that organises the UI components */
-  private layoutt: List;
-  /** Slider that changes the master volume */
-  private masterSlider: VolumeSlider;
+  private layout: List;
   /** Slider that changes background music volume */
   private bgmSlider: VolumeSlider;
   /** Slider that changes sound effects volume */
   private sfxSlider: VolumeSlider;
+
+  private switchVolume: Switcher;
+  private sfxLabel: Text;
 
   constructor() {
     super();
@@ -58,6 +59,7 @@ export class SettingsPopup extends Container {
     this.panel.addChild(this.title);
 
     this.doneButton = new Button({ text: "OK" });
+    this.doneButton.anchor.set(0.5, 0.5);
     this.doneButton.y = this.panelBase.boxHeight * 0.5 - 78;
     this.doneButton.onPress.connect(() => engine().navigation.dismissPopup());
     this.panel.addChild(this.doneButton);
@@ -73,28 +75,34 @@ export class SettingsPopup extends Container {
     this.versionLabel.y = this.panelBase.boxHeight * 0.5 - 15;
     this.panel.addChild(this.versionLabel);
 
-    this.layoutt = new List({ type: "vertical", elementsMargin: 4 });
-    this.layoutt.x = -140;
-    this.layoutt.y = -80;
-    this.panel.addChild(this.layoutt);
-
-    this.masterSlider = new VolumeSlider("Master Volume");
-    this.masterSlider.onUpdate.connect((v) => {
-      userSettings.setMasterVolume(v / 100);
-    });
-    this.layoutt.addChild(this.masterSlider);
+    this.layout = new List({ type: "vertical", elementsMargin: 4 });
+    this.layout.x = -140;
+    this.layout.y = -80;
+    this.panel.addChild(this.layout);
 
     this.bgmSlider = new VolumeSlider("BGM Volume");
     this.bgmSlider.onUpdate.connect((v) => {
       userSettings.setBgmVolume(v / 100);
     });
-    this.layoutt.addChild(this.bgmSlider);
+    this.layout.addChild(this.bgmSlider);
 
     this.sfxSlider = new VolumeSlider("SFX Volume");
     this.sfxSlider.onUpdate.connect((v) => {
       userSettings.setSfxVolume(v / 100);
     });
-    this.layoutt.addChild(this.sfxSlider);
+    this.layout.addChild(this.sfxSlider);
+
+
+    this.sfxLabel = new Label({
+      text: `SFX`,
+      style: {
+        fill: 0x000000,
+        fontSize: 24,
+      },
+    });
+    this.switchVolume = new Switcher(["switch-bg-on.png", "switch-bg-off.png"]);
+    this.switchVolume.addChild(this.sfxLabel);
+    this.layout.addChild(this.switchVolume);
   }
 
   /** Resize the popup, fired whenever window size changes */
@@ -107,7 +115,6 @@ export class SettingsPopup extends Container {
 
   /** Set things up just before showing the popup */
   public prepare() {
-    this.masterSlider.value = userSettings.getMasterVolume() * 100;
     this.bgmSlider.value = userSettings.getBgmVolume() * 100;
     this.sfxSlider.value = userSettings.getSfxVolume() * 100;
   }
