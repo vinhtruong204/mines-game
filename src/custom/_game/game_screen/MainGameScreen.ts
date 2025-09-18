@@ -6,6 +6,7 @@ import { Spine } from "@esotericsoftware/spine-pixi-v8";
 import { Button } from "../../../app/ui/Button";
 import { SettingsPopup } from "../../../app/popups/SettingsPopup";
 import { GameMode, GameModeLabel } from "../../ui/bet_ui/mines_ui/GameMode";
+import { BackgroundAnimation } from "./BackgroundAnimation";
 
 const safeZoneSize = {
     width: 720,
@@ -21,7 +22,7 @@ const bgSpineOffset = {
 
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
-    // public static assetBundles = ["main"];
+    public static assetBundles = ["default"];
 
     private paused = false;
     private bg: Sprite;
@@ -33,7 +34,6 @@ export class MainGameScreen extends Container {
     // UI Manager
     private uiManager: UIManager;
 
-
     constructor() {
         super();
 
@@ -44,7 +44,7 @@ export class MainGameScreen extends Container {
 
         this.bg = Sprite.from(`bg.jpg`);
         this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
-        this.bgSpine.state.setAnimation(0, "idle", true);
+        this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
         // console.log(this.bgSpine.skeleton.data.animations);
 
         const button = new Button({
@@ -61,8 +61,38 @@ export class MainGameScreen extends Container {
     }
 
     private onGameModeChange(gameMode: GameMode) {
-        console.log(GameModeLabel[gameMode]);
+        switch (gameMode) {
+            case GameMode.EASY:
+                this.bgSpine.state.setEmptyAnimation(1, 0.5);
+                this.bgSpine.state.setEmptyAnimation(2, 0.5);
+                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
+                break;
+
+            case GameMode.MEDIUM:
+                this.bgSpine.state.setEmptyAnimation(2, 0.5);
+                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setAnimation(1, BackgroundAnimation.LEVEL_2, true);
+                break;
+
+            case GameMode.HARD:
+                // this.bgSpine.state.clearTrack(3);
+                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setAnimation(1, BackgroundAnimation.LEVEL_2, true);
+                this.bgSpine.state.setAnimation(2, BackgroundAnimation.LEVEL_3, true);
+                break;
+
+            case GameMode.EXTREME:
+                this.bgSpine.state.setAnimation(1, BackgroundAnimation.LEVEL_2, true);
+                this.bgSpine.state.setAnimation(2, BackgroundAnimation.LEVEL_3, true);
+                this.bgSpine.state.setAnimation(3, BackgroundAnimation.LEVEL_4, true);
+                break;
+
+            default:
+                break;
+        }
     }
+
 
     private showPopup() {
         // console.log("show popup");
@@ -104,7 +134,7 @@ export class MainGameScreen extends Container {
         this.boardContainer.position.set(centerX + 50, boardOffsetY - safeZoneSize.height);
 
         const uiManagerOffsetX = (this.boardContainer.width - this.uiManager.width) / 2;
-        this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height + 150);
+        this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height + 260);
 
         this.bg.position.set(centerX, -safeZoneSize.height);
         this.bgSpine.position.set(this.bg.position.x + bgSpineOffset.x, this.bg.position.y + bgSpineOffset.y);

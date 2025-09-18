@@ -2,11 +2,28 @@
   "bundles": [
     {
       "name": "default",
-      "assets": []
+      "assets": [
+        {
+          "alias": "bg.atlas",
+          "src": "main/anim/bg/background.atlas"
+        },
+        {
+          "alias": "bg.skel",
+          "src": "main/anim/bg/background.skel"
+        }
+      ]
     },
     {
       "name": "main",
       "assets": [
+        {
+          "alias": "tile.atlas",
+          "src": "main/anim/tile/tile.atlas"
+        },
+        {
+          "alias": "tile.skel",
+          "src": "main/anim/tile/tile.skel"
+        },
         {
           "alias": "bg.jpg",
           "src": "main/bg/bg.jpg"
@@ -29,22 +46,6 @@
             "main/sounds/bgm-main.mp3"
           ],
           "src": "main/sounds/bgm-main.mp3"
-        },
-        {
-          "alias": "bg.atlas",
-          "src": "main/anim/bg/background.atlas"
-        },
-        {
-          "alias": "bg.skel",
-          "src": "main/anim/bg/background.skel"
-        },
-        {
-          "alias": "tile.atlas",
-          "src": "main/anim/tile/tile.atlas"
-        },
-        {
-          "alias": "tile.skel",
-          "src": "main/anim/tile/tile.skel"
         },
         {
           "alias": "button.png",
