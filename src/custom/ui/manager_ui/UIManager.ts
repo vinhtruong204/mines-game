@@ -6,12 +6,15 @@ import { CapsuleType } from "../capsule_ui/CapsuleType";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameModeChangeEvent } from "../../events/game_mode_events/GameModeChangeEvent";
 import { WinContainerEvent } from "../../events/WinContainerEvent";
+import { GameMode } from "../bet_ui/mines_ui/GameMode";
 
 //**This class will manage visible of two types UI (Manual and Auto) */
 export class UIManager extends Container {
     private containerCapsule: ContainerCapsule;
     private manualBetContainer: ManualBetContainer;
     private autoBetContainer: AutoBetContainer;
+
+    public gameModeChange?: (gameMode: GameMode) => void;
 
     constructor() {
         super();
@@ -25,13 +28,19 @@ export class UIManager extends Container {
             this.containerCapsule.x,
             this.containerCapsule.y + this.containerCapsule.height
         );
+        this.manualBetContainer.gameModeChange = this.onGameModeChange.bind(this);
 
         this.autoBetContainer = new AutoBetContainer(
             this.containerCapsule.x,
             this.containerCapsule.y + this.containerCapsule.height
         );
+        this.autoBetContainer.gameModeChange = this.onGameModeChange.bind(this);
 
         this.addChild(this.containerCapsule, this.manualBetContainer, this.autoBetContainer);
+    }
+
+    private onGameModeChange(gameMode: GameMode) {
+        this.gameModeChange?.(gameMode);
     }
 
     private handleUIChange(capsuleType: CapsuleType | null) {

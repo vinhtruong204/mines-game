@@ -5,6 +5,7 @@ import { engine } from "../../../app/getEngine";
 import { Spine } from "@esotericsoftware/spine-pixi-v8";
 import { Button } from "../../../app/ui/Button";
 import { SettingsPopup } from "../../../app/popups/SettingsPopup";
+import { GameMode, GameModeLabel } from "../../ui/bet_ui/mines_ui/GameMode";
 
 const safeZoneSize = {
     width: 720,
@@ -39,6 +40,7 @@ export class MainGameScreen extends Container {
         this.boardContainer = new BoardContainer();
 
         this.uiManager = new UIManager();
+        this.uiManager.gameModeChange = this.onGameModeChange.bind(this);
 
         this.bg = Sprite.from(`bg.jpg`);
         this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
@@ -56,6 +58,10 @@ export class MainGameScreen extends Container {
 
         this.addChild(this.bg, this.bgSpine, this.boardContainer, this.uiManager);
 
+    }
+
+    private onGameModeChange(gameMode: GameMode) {
+        console.log(GameModeLabel[gameMode]);
     }
 
     private showPopup() {
@@ -99,7 +105,7 @@ export class MainGameScreen extends Container {
 
         const uiManagerOffsetX = (this.boardContainer.width - this.uiManager.width) / 2;
         this.uiManager.position.set(centerX + uiManagerOffsetX, this.boardContainer.y + this.boardContainer.height + 150);
-        
+
         this.bg.position.set(centerX, -safeZoneSize.height);
         this.bgSpine.position.set(this.bg.position.x + bgSpineOffset.x, this.bg.position.y + bgSpineOffset.y);
 

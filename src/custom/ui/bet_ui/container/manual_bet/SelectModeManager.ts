@@ -7,6 +7,7 @@ export class SelectModeManager extends Container {
 
     private modeButtons: Button[];
     private selectedIndex: number = 0;
+    public gameModeChange?: (gameMode: GameMode) => void;
 
     constructor() {
         super();
@@ -60,6 +61,8 @@ export class SelectModeManager extends Container {
 
         // Update current index
         this.selectedIndex = index;
+
+        this.gameModeChange?.(this.selectedIndex as GameMode);
     }
 
     public setCurrentMode(gameMode: GameMode) {

@@ -12,6 +12,7 @@ type BetState = {
 export class BetContainer extends Container {
     protected betAmount: LabeledInput;
     protected selectModeGroup: SelectModeGroup;
+    public gameModeChange?: (gameMode: GameMode) => void;
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
@@ -24,8 +25,13 @@ export class BetContainer extends Container {
         // Select mode group
         this.selectModeGroup = new SelectModeGroup();
         this.selectModeGroup.position.set(this.betAmount.x, this.betAmount.y + this.betAmount.height);
+        this.selectModeGroup.gameModeChange = this.onGameModeChange.bind(this);
 
         this.addChild(this.betAmount, this.selectModeGroup);
+    }
+
+    private onGameModeChange(gameMode: GameMode) {
+        this.gameModeChange?.(gameMode);
     }
 
     public getBetState(): BetState {
