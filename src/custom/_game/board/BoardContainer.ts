@@ -90,7 +90,7 @@ export class BoardContainer extends Container {
         }
 
         this.tilesAPI = this.tiles.flat();
-        // console.log(this.tilesAPI);
+        // console.log(this.tilesAPI)
     }
 
     private async onPress(tile: Tile, i: number, j: number) {
