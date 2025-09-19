@@ -17,7 +17,7 @@ const boardOffsetY = 424;
 
 const bgSpineOffset = {
     x: 360,
-    y: 790
+    y: 780
 }
 
 export class MainGameScreen extends Container {
@@ -128,7 +128,7 @@ export class MainGameScreen extends Container {
     public resize(width: number, height: number) {
         const centerX = (width - this.bg.width) * 0.5;
         const centerY = (height - this.boardContainer.height) * 0.5;
-        centerY;
+        this.bgSpine.position.y = centerY;
 
         // Center the board when window size change
         this.boardContainer.position.set(centerX + 50, boardOffsetY - safeZoneSize.height);
