@@ -1,5 +1,5 @@
 import { Container, Graphics, FederatedPointerEvent } from "pixi.js";
-import { engine } from "../../../../app/getEngine";
+import { engine } from "../../../../../app/getEngine";
 
 const bgSize = {
     width: 40,

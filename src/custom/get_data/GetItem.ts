@@ -38,11 +38,7 @@ export class GetItem {
     this.mockData = matrix;
   }
 
-  public static async getItemType(i: number, j: number): Promise<ItemType> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(this.mockData[i][j]);
-      }, 0);
-    });
+  public static getItemType(i: number, j: number): ItemType {
+    return this.mockData[i][j] as ItemType;
   }
 }

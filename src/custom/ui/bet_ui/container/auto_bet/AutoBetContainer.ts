@@ -23,7 +23,7 @@ const defaultButtonSize = {
     height: 90
 }
 
-const scrollHeight = 620;
+const scrollHeight = 400;
 
 export class AutoBetContainer extends BetContainer {
     private numberOfGames: LabeledInput;

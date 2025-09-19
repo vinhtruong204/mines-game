@@ -16,7 +16,7 @@ export enum TileAnimation {
 }
 
 export class Tile extends ButtonContainer {
-    private itemType: ItemType = ItemType.DIAMOND;
+    // private itemType: ItemType = ItemType.DIAMOND;
     private _pressed: boolean = false;
 
     private tileSpine: Spine;
@@ -40,8 +40,8 @@ export class Tile extends ButtonContainer {
         // this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
     }
 
-    public handleDisAppear() {
-        switch (this.itemType) {
+    public handleDisAppear(itemType: ItemType) {
+        switch (itemType) {
             case ItemType.DIAMOND:
                 this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
                 break;
@@ -54,7 +54,6 @@ export class Tile extends ButtonContainer {
     }
 
     public handleOpen(itemType: ItemType) {
-        this.itemType = itemType;
 
         if (itemType === ItemType.DIAMOND) {
             const crownAppear = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_APPEAR, false);

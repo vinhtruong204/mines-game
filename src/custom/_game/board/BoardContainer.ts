@@ -93,11 +93,11 @@ export class BoardContainer extends Container {
         // console.log(this.tilesAPI)
     }
 
-    private async onPress(tile: Tile, i: number, j: number) {
+    private  onPress(tile: Tile, i: number, j: number) {
         tile.zIndex = 99;
-        let itemTypeTest = await GetItem.getItemType(i, j);
-        // console.log(itemTypeTest);
-        tile.handleOpen(itemTypeTest);
+        // let itemTypeTest =  GetItem.getItemType(i, j);
+        // // console.log(itemTypeTest);
+        // tile.handleOpen(itemTypeTest);
         // Seperate logic for the auto mode 
         if (this.isAuto) {
             this.onPressAutoMode(tile);
@@ -108,7 +108,7 @@ export class BoardContainer extends Container {
         if (!GameStateManager.getInstance().isBetting()) return;
         if (tile.pressed) return;
 
-        let itemType = await GetItem.getItemType(i, j);
+        let itemType =  GetItem.getItemType(i, j);
 
         tile.handleOpen(itemType);
 
@@ -127,7 +127,7 @@ export class BoardContainer extends Container {
             this.reavealAllTiles();
         }
 
-        tile.setSize(tileSize.width, tileSize.height);
+        // tile.setSize(tileSize.width, tileSize.height);
         tile.pressed = true;
     }
 
@@ -160,6 +160,7 @@ export class BoardContainer extends Container {
 
                 // Reset all the Tiles
                 this.resetAllTiles();
+                
             }
         }
         else if (state === GameState.NOT_BETTING) {
@@ -240,21 +241,24 @@ export class BoardContainer extends Container {
                 if (!this.isAuto || isTheFirstTime)
                     this.tiles[i][j].pressed = false;
 
-                this.tiles[i][j].alpha = this.isAuto && this.tiles[i][j].pressed ? 0.75 : 1;
-                // this.tiles[i][j].defaultView = this.getTileView("Tile.png");
+                this.tiles[i][j].handleDisAppear(GetItem.getItemType(i, j));
 
-                this.tiles[i][j].setSize(tileSize.width, tileSize.height);
+                // this.tiles[i][j].alpha = this.isAuto && this.tiles[i][j].pressed ? 0.75 : 1;
+                // this.tiles[i][j].defaultView = this.getTileView("Tile.png");
+                
+
+                // this.tiles[i][j].setSize(tileSize.width, tileSize.height);
             }
         }
     }
 
-    private async reavealAllTiles() {
+    private  reavealAllTiles() {
         this.diamondCount = 0;
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
-                const item = await GetItem.getItemType(i, j);
+                const item =  GetItem.getItemType(i, j);
                 if (item === ItemType.DIAMOND) {
                     // this.tiles[i][j].defaultView = this.getTileView("diamond.png");
 
@@ -269,7 +273,8 @@ export class BoardContainer extends Container {
                 }
 
                 this.tiles[i][j].alpha = this.tiles[i][j].pressed ? 1 : 0.35;
-                this.tiles[i][j].setSize(tileSize.width, tileSize.height);
+                // this.tiles[i][j].setSize(tileSize.width, tileSize.height);
+                this.tiles[i][j].handleAppear()
             }
         }
 
@@ -277,7 +282,7 @@ export class BoardContainer extends Container {
         this.checkGameResult();
     }
 
-    private async onPickRandom() {
+    private  onPickRandom() {
         const available: { btn: Tile; i: number; j: number }[] = [];
 
         for (let i = 0; i < this.tiles.length; i++) {
