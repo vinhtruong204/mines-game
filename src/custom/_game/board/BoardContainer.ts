@@ -116,6 +116,7 @@ export class BoardContainer extends Container {
 
         // Update default view
         if (itemType === ItemType.CROWN) {
+            this.updateTileIndex(tile, 9);
             // btn.defaultView = this.getTileView("diamond.png");
         } else if (itemType === ItemType.BOMB) {
             // btn.defaultView = this.getTileView("bomb.png");
