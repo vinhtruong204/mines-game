@@ -5,7 +5,7 @@ import { CustomLabelInput } from "./CustomLabelInput";
 import { InputNumberOfGames } from "./InputNumberOfGames";
 import { CustomInputStopAuto } from "./CustomInputStopAuto";
 import { InputBetAmount } from "../../bet_amount/InputBetAmount";
-import { FederatedPointerEvent, FederatedWheelEvent } from "pixi.js";
+import { FederatedPointerEvent, FederatedWheelEvent, Rectangle } from "pixi.js";
 import { engine } from "../../../../../app/getEngine";
 import { AutoBettingEvent } from "../../../../events/auto_betting_events/AutoBettingEvent";
 import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
@@ -101,6 +101,7 @@ export class AutoBetContainer extends BetContainer {
 
         this.eventMode = 'static';
         engine().stage.eventMode = 'static';
+        this.hitArea = new Rectangle(0, 0, this.width, this.height);
 
         this.on("pointerdown", this.startDrag, this);
         this.on("pointerup", this.endDrag, this);

@@ -1,10 +1,11 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, FederatedPointerEvent, FederatedWheelEvent, Graphics, Rectangle } from "pixi.js";
 import { CustomInputBase } from "../../base/CustomInputBase";
 import { LabeledInput } from "../../base/LabeledInput";
 import { Button } from "../../../../../app/ui/Button";
 import { ItemType } from "../../../../_game/board/ItemType";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
+import { engine } from "../../../../../app/getEngine";
 
 const defaultInputFieldSize = {
     width: 350,
@@ -16,6 +17,8 @@ const defaultButtonSize = {
     height: 50
 }
 
+const scrollHeight = 300;
+
 export class ManualBettingContainer extends Container {
     private minesCount: LabeledInput;
     private diamondRemain: LabeledInput;
@@ -26,6 +29,9 @@ export class ManualBettingContainer extends Container {
     private cashoutButton: Button;
 
     public onBettingCompleted?: () => void;
+
+    // Handle event draging
+    private isDragging: boolean = false;
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
@@ -81,6 +87,7 @@ export class ManualBettingContainer extends Container {
         this.cashoutButton.anchor.set(0, 0);
         this.cashoutButton.position.set(this.randomPickButton.x, this.randomPickButton.y + this.randomPickButton.height + 20);
         this.cashoutButton.onPress.connect(this.handleWithdrawButtonClicked.bind(this));
+        this.cashoutButton.visible = false;
 
         // Disable for the first time
         this.cashoutButton.alpha = 0.5;
@@ -90,6 +97,84 @@ export class ManualBettingContainer extends Container {
 
         // Disable when the game start
         this.visible = false;
+
+        // Handle event scroll
+        this.eventMode = 'static';
+        engine().stage.eventMode = 'static';
+        this.hitArea = new Rectangle(0, 0, this.width, this.height);
+
+        this.on("pointerdown", this.startDrag, this);
+        this.on("pointerup", this.endDrag, this);
+        this.on("pointerupoutside", this.endDrag, this);
+
+        this.on('wheel', this.onWheel, this);
+    }
+
+    private onWheel(event: FederatedWheelEvent) {
+        // Access scroll delta information
+        // console.log('Vertical scroll:', event.deltaY);
+        this.updateUIVisibility(-event.deltaY / 5);
+    }
+
+    private dragStartY: number = 0;
+    private startDrag(e: FederatedPointerEvent) {
+        // console.log("start drag");
+        this.isDragging = true;
+        this.dragStartY = e.global.y;
+
+        engine().stage.on("pointermove", this.onDragMove, this);
+    }
+
+    private onDragMove(e: FederatedPointerEvent) {
+        if (!this.isDragging) return;
+
+        const deltaY = e.global.y - this.dragStartY;
+        this.dragStartY = e.global.y;
+
+        this.updateUIVisibility(deltaY);
+    }
+
+    private endDrag() {
+        console.log("end drag");
+        this.isDragging = false;
+        engine().stage.off("pointermove", this.onDragMove, this);
+    }
+
+    private canScrollDown: boolean = false;
+    private canScrollUp: boolean = true;
+    private updateUIVisibility(deltaY: number) {
+        // Calm y value of bet amount
+        // if (this.betAmount.y <= 0) this.betAmount.y = 0;
+
+        // console.log(deltaY);
+        // Can't scroll down
+        if (deltaY > 0 && !this.canScrollDown) {
+            // console.log('Can not scroll down');
+            return;
+
+        }
+
+        // Can't scroll up
+        if (deltaY < 0 && !this.canScrollUp) {
+            // console.log('Can not scroll up'); 
+            return;
+        }
+
+        for (const child of this.children) {
+            child.position.y += deltaY;
+            if (child.y < 0 || child.y + child.height >= scrollHeight) {
+                child.visible = false;
+            } else {
+                child.visible = true;
+            }
+        }
+
+        // console.log(this.betAmount.visible);
+        if (this.minesCount.visible == true) this.canScrollDown = false;
+        else this.canScrollDown = true;
+
+        if (this.cashoutButton.visible == true) this.canScrollUp = false;
+        else this.canScrollUp = true;
     }
 
     private onItemPressed(itemType: ItemType) {

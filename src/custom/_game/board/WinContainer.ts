@@ -18,8 +18,8 @@ export class WinContainer extends Container {
 
         const graphics = new Graphics()
             .roundRect(0, 0, defaultWinContainerSize.width, defaultWinContainerSize.height)
-            .fill({ color: 'white', alpha: 0.75 })
-            .stroke({ width: 20, color: 'green', alignment: 0.5, alpha: 0.75 });
+            .fill({ color: 'white', alpha: 0.5 })
+            .stroke({ width: 10, color: 'green', alignment: 0.5, alpha: 0.5 });
 
         this.winInforText = new Text({
             text: '1.00x \n\n000.00',
@@ -38,6 +38,8 @@ export class WinContainer extends Container {
 
         // Disable when the game start
         this.visible = false;
+
+        this.zIndex = 100;
     }
 
     private onWinContainerEnable(profitMultiplier: number, totalProfit: number) {
