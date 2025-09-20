@@ -42,10 +42,10 @@ export class Tile extends ButtonContainer {
 
     public handleDisAppear(itemType: ItemType) {
         switch (itemType) {
-            case ItemType.DIAMOND:
+            case ItemType.CROWN:
                 this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
                 break;
-            case ItemType.MINE:
+            case ItemType.BOMB:
                 this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
                 break;
             default:
@@ -55,7 +55,7 @@ export class Tile extends ButtonContainer {
 
     public handleOpen(itemType: ItemType) {
 
-        if (itemType === ItemType.DIAMOND) {
+        if (itemType === ItemType.CROWN) {
             const crownAppear = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_APPEAR, false);
             crownAppear.listener = {
                 complete: () => {
@@ -63,16 +63,17 @@ export class Tile extends ButtonContainer {
                 }
             }
         }
-        else if (itemType === ItemType.MINE) {
+        else if (itemType === ItemType.BOMB) {
             const bombAppear = this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_APPEAR, false);
             bombAppear.listener = {
                 complete: () => {
                     let explode = this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
                     explode.listener = {
-                        complete: () => {
-                            this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
-                        }
+                        // complete: () => {
+                        //     this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
+                        // }
                     }
+
                 }
             }
         }

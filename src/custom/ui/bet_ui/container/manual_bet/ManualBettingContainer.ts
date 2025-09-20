@@ -93,11 +93,11 @@ export class ManualBettingContainer extends Container {
     }
 
     private onItemPressed(itemType: ItemType) {
-        if (itemType === ItemType.DIAMOND) {
+        if (itemType === ItemType.CROWN) {
             this.cashoutButton.alpha = 1;
             this.cashoutButton.interactive = true;
         }
-        else if (itemType === ItemType.MINE) {
+        else if (itemType === ItemType.BOMB) {
             this.cashoutButton.alpha = 0.5;
             this.cashoutButton.interactive = false;
         }

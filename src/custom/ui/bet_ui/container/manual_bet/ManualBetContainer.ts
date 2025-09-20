@@ -107,11 +107,11 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private onItemPressed(itemType: ItemType) {
-        if (itemType === ItemType.DIAMOND) {
+        if (itemType === ItemType.CROWN) {
             this.diamondCollected++;
 
             this.manualBettingContainer.setGameConfig(null, --this.diamondRemain, this.getTotalProfit(), this.getProfitMultipler());
-        } else if (itemType === ItemType.MINE) {
+        } else if (itemType === ItemType.BOMB) {
             this.manualBettingContainer.setGameConfig(null, this.diamondRemain, 0);
         }
     }
