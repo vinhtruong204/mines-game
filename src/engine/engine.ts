@@ -39,6 +39,7 @@ export class CreationEngine extends Application {
     opts.resizeTo ??= window;
     opts.resolution ??= getResolution();
     opts.antialias = true;
+    opts.premultipliedAlpha = false;
     // opts.width = 720;
     // opts.height = 1280;
 

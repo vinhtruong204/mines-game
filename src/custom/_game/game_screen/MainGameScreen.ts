@@ -44,6 +44,9 @@ export class MainGameScreen extends Container {
         this.bg = Sprite.from(`bg.jpg`);
         this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
         this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
+        // this.bgSpine.blendMode = "normal";
+        // this.bgSpine.autoUpdate = true;
+
         // console.log(this.bgSpine.skeleton.data.animations);
 
         // const button = new Button({
@@ -65,22 +68,22 @@ export class MainGameScreen extends Container {
     private onGameModeChange(gameMode: GameMode) {
         switch (gameMode) {
             case GameMode.EASY:
-                this.bgSpine.state.setEmptyAnimation(1, 0.5);
-                this.bgSpine.state.setEmptyAnimation(2, 0.5);
-                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setEmptyAnimation(1, 0.25);
+                this.bgSpine.state.setEmptyAnimation(2, 0.25);
+                this.bgSpine.state.setEmptyAnimation(3, 0.25);
                 this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
                 break;
 
             case GameMode.MEDIUM:
-                this.bgSpine.state.setEmptyAnimation(2, 0.5);
-                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setEmptyAnimation(2, 0.25);
+                this.bgSpine.state.setEmptyAnimation(3, 0.25);
                 this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
                 this.bgSpine.state.setAnimation(1, BackgroundAnimation.LEVEL_2, true);
                 break;
 
             case GameMode.HARD:
                 // this.bgSpine.state.clearTrack(3);
-                this.bgSpine.state.setEmptyAnimation(3, 0.5);
+                this.bgSpine.state.setEmptyAnimation(3, 0.25);
                 this.bgSpine.state.setAnimation(0, BackgroundAnimation.LEVEL_1, true);
                 this.bgSpine.state.setAnimation(1, BackgroundAnimation.LEVEL_2, true);
                 this.bgSpine.state.setAnimation(2, BackgroundAnimation.LEVEL_3, true);

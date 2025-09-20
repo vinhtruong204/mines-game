@@ -309,9 +309,7 @@ export class BoardContainer extends Container {
     }
 
     private changeTileColor() {
-        this.tiles.forEach(item => {
-            item.handleSwitchMode(this.isAuto);
-        });
+        this.tiles.forEach(item => item.handleSwitchMode(this.isAuto));
     }
 
     private onAutoModeStop() {

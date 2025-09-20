@@ -23,12 +23,16 @@ export class Tile extends ButtonContainer {
         super();
 
         this.tileSpine = Spine.from({ skeleton: "tile.skel", atlas: "tile.atlas" });
+        this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, true);
 
-        this.tileSpine.state.data.setMix(TileAnimation.COLOR_BLUE, TileAnimation.COLOR_PURPLE, 0.25);
-        this.tileSpine.state.data.setMix(TileAnimation.COLOR_PURPLE, TileAnimation.COLOR_BLUE, 0.25);
+        // this.tileSpine.state.data.setMix(TileAnimation.COLOR_BLUE, TileAnimation.COLOR_PURPLE, 0.25);
+        // this.tileSpine.state.data.setMix(TileAnimation.COLOR_PURPLE, TileAnimation.COLOR_BLUE, 0.25);
+
 
         // console.log(this.tileSpine.skeleton.data.animations.map(item => item.name));
-        this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
+        // this.tileSpine.blendMode = BlendMode.Normal;
+        // this.tileSpine.autoUpdate = true;
+
 
         this.addChild(this.tileSpine);
     }
@@ -86,16 +90,11 @@ export class Tile extends ButtonContainer {
     }
 
     public handleSwitchMode(isAuto: boolean) {
-        if (!isAuto) {
-            this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
-            // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_BLUE, false, 0);
+        // this.tileSpine.skeleton.setToSetupPose();
 
-        }
-        else {
-            this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_PURPLE, false);
-            // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_PURPLE, false, 0);
-        }
+        this.tileSpine.state.setEmptyAnimation(0, 0.1);
 
+        this.tileSpine.state.addAnimation(0, isAuto ? TileAnimation.COLOR_PURPLE : TileAnimation.COLOR_BLUE, false, 0).mixDuration = 0.15;
     }
 
     get pressed(): boolean {
