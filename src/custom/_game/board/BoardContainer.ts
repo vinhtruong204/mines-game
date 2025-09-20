@@ -25,8 +25,6 @@ const offsetTileBoard = {
 }
 
 export class BoardContainer extends Container {
-    // private TileSize: number = 0;
-    // private tiles: Tile[][] = [];
     private tiles: Tile[] = [];
     private TilePressedAutoCount: number = 0;
 
@@ -109,6 +107,7 @@ export class BoardContainer extends Container {
         let tileIndex = this.tiles.indexOf(tile);
         let itemType = GetItem.getItemType(tileIndex);
 
+        tile.pressed = true;
         tile.handleOpen(itemType);
 
         // Raise event to update UI
@@ -124,13 +123,9 @@ export class BoardContainer extends Container {
 
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-            tile.pressed = true;
             // Reveal all the Tiles
             this.reavealAllTiles();
         }
-
-        // tile.setSize(tileSize.width, tileSize.height);
-        tile.pressed = true;
     }
 
     private onPressAutoMode(tile: Tile) {
@@ -246,6 +241,7 @@ export class BoardContainer extends Container {
             if (!this.isAuto || isTheFirstTime)
                 this.tiles[i].pressed = false;
 
+            // Handle for manual -> auto mode
             this.tiles[i].handleDisAppear(GetItem.getItemType(i));
 
             this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
@@ -277,7 +273,6 @@ export class BoardContainer extends Container {
             }
 
             this.tiles[i].alpha = this.tiles[i].pressed ? 1 : 0.35;
-            // this.tiles[i].setSize(tileSize.width, tileSize.height);
             if (!this.tiles[i].pressed || this.isAuto)
                 this.tiles[i].handleOpen(itemType);
 
@@ -306,7 +301,6 @@ export class BoardContainer extends Container {
         this.isAuto = true;
 
         this.changeTileColor();
-
 
         this.TilePressedAutoCount = 0;
 

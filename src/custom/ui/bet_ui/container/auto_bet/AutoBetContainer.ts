@@ -15,6 +15,7 @@ import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
 import { GameState } from "../../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
 import { Button } from "../../../../../app/ui/Button";
+import { GameModeChangeEvent } from "../../../../events/game_mode_events/GameModeChangeEvent";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -55,6 +56,9 @@ export class AutoBetContainer extends BetContainer {
 
         // Only allow start auto
         globalEmitter.on(AutoBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
+
+        // On mode change to manual
+        globalEmitter.on(GameModeChangeEvent.MANUAL, this.resetStartAutoButton.bind(this));
 
         // Input number of games Autobet
         this.inputNumberOfGames = new InputNumberOfGames();

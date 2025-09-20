@@ -16,7 +16,6 @@ export enum TileAnimation {
 }
 
 export class Tile extends ButtonContainer {
-    // private itemType: ItemType = ItemType.DIAMOND;
     private _pressed: boolean = false;
 
     private tileSpine: Spine;
@@ -41,6 +40,13 @@ export class Tile extends ButtonContainer {
     }
 
     public handleDisAppear(itemType: ItemType) {
+        let currentAnimation = this.tileSpine.state.getCurrent(1)?.animation?.name;
+
+        if ([TileAnimation.ALL_APPEAR, TileAnimation.CROWN_DISAPPEAR, TileAnimation.BOMB_DISAPPEAR]
+            .includes(currentAnimation as TileAnimation)) {
+            return;
+        }
+
         switch (itemType) {
             case ItemType.CROWN:
                 this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
@@ -80,10 +86,7 @@ export class Tile extends ButtonContainer {
     }
 
     public handleSwitchMode(isAuto: boolean) {
-        this.tileSpine.state.setEmptyAnimation(0, 0.25);
-
         if (!isAuto) {
-
             this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
             // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_BLUE, false, 0);
 
