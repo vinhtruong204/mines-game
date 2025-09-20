@@ -80,7 +80,10 @@ export class Tile extends ButtonContainer {
     }
 
     public handleSwitchMode(isAuto: boolean) {
+        this.tileSpine.state.setEmptyAnimation(0, 0.25);
+
         if (!isAuto) {
+
             this.tileSpine.state.setAnimation(0, TileAnimation.COLOR_BLUE, false);
             // this.tileSpine.state.addAnimation(0, TileAnimation.COLOR_BLUE, false, 0);
 

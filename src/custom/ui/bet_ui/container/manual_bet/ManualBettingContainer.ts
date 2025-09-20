@@ -135,7 +135,7 @@ export class ManualBettingContainer extends Container {
     }
 
     private endDrag() {
-        console.log("end drag");
+        // console.log("end drag");
         this.isDragging = false;
         engine().stage.off("pointermove", this.onDragMove, this);
     }

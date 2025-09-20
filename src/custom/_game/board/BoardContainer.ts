@@ -26,8 +26,8 @@ const offsetTileBoard = {
 
 export class BoardContainer extends Container {
     // private TileSize: number = 0;
-    private tiles: Tile[][] = [];
-    private tilesAPI: Tile[] = [];
+    // private tiles: Tile[][] = [];
+    private tiles: Tile[] = [];
     private TilePressedAutoCount: number = 0;
 
     // Variables for the auto
@@ -69,9 +69,8 @@ export class BoardContainer extends Container {
             (tileSize.height * columns - this.winContainer.height) / 2
         );
 
+        let index = 0;
         for (let i = 0; i < rows; i++) {
-            this.tiles[i] = [];
-
             for (let j = 0; j < columns; j++) {
                 const tile = new Tile();
 
@@ -81,19 +80,19 @@ export class BoardContainer extends Container {
                 tile.position.set(j * tileSize.width + offsetTileBoard.x, i * tileSize.height + offsetTileBoard.y);
 
                 // Handle onclick event
-                tile.onPress.connect(() => this.onPress(tile, i, j));
+                tile.onPress.connect(() => this.onPress(tile));
                 tile.onOut.connect(() => tile.zIndex = 0);
 
                 this.addChild(tile);
-                this.tiles[i][j] = tile;
+                this.tiles[index++] = tile;
             }
         }
 
-        this.tilesAPI = this.tiles.flat();
+        // this.tilesAPI = this.tiles.flat();
         // console.log(this.tilesAPI)
     }
 
-    private onPress(tile: Tile, i: number, j: number) {
+    private onPress(tile: Tile) {
         // let itemTypeTest =  GetItem.getItemType(i, j);
         // // console.log(itemTypeTest);
         // tile.handleOpen(itemTypeTest);
@@ -107,7 +106,8 @@ export class BoardContainer extends Container {
         if (!GameStateManager.getInstance().isBetting()) return;
         if (tile.pressed) return;
 
-        let itemType = GetItem.getItemType(i, j);
+        let tileIndex = this.tiles.indexOf(tile);
+        let itemType = GetItem.getItemType(tileIndex);
 
         tile.handleOpen(itemType);
 
@@ -242,21 +242,18 @@ export class BoardContainer extends Container {
 
     private resetAllTiles(isTheFirstTime: boolean = false) {
         for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
+            // If is not auto or the first time switch to auto mode
+            if (!this.isAuto || isTheFirstTime)
+                this.tiles[i].pressed = false;
 
-                // If is not auto or the first time switch to auto mode
-                if (!this.isAuto || isTheFirstTime)
-                    this.tiles[i][j].pressed = false;
+            this.tiles[i].handleDisAppear(GetItem.getItemType(i));
 
-                this.tiles[i][j].handleDisAppear(GetItem.getItemType(i, j));
+            this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
 
-
-                this.tiles[i][j].alpha = this.isAuto && this.tiles[i][j].pressed ? 0.75 : 1;
-
-                // Reset tile z index
-                this.updateTileIndex(this.tiles[i][j], 0);
-            }
+            // Reset tile z index
+            this.updateTileIndex(this.tiles[i], 0);
         }
+
     }
 
     private reavealAllTiles() {
@@ -264,27 +261,26 @@ export class BoardContainer extends Container {
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
-                const itemType = GetItem.getItemType(i, j);
-                if (itemType === ItemType.CROWN) {
-                    // this.tiles[i][j].defaultView = this.getTileView("diamond.png");
+            const itemType = GetItem.getItemType(i);
+            if (itemType === ItemType.CROWN) {
+                // this.tiles[i].defaultView = this.getTileView("diamond.png");
 
-                    // Increase diamond count
-                    if (this.tiles[i][j].pressed) this.diamondCount++;
-                }
-                else if (itemType === ItemType.BOMB) {
-                    // Update index if item is the bomb
-                    this.updateTileIndex(this.tiles[i][j], 99);
-
-                    // Increase mine count
-                    if (this.tiles[i][j].pressed) this.mineCount++;
-                }
-
-                this.tiles[i][j].alpha = this.tiles[i][j].pressed ? 1 : 0.35;
-                // this.tiles[i][j].setSize(tileSize.width, tileSize.height);
-                if (!this.tiles[i][j].pressed || this.isAuto)
-                    this.tiles[i][j].handleOpen(itemType);
+                // Increase diamond count
+                if (this.tiles[i].pressed) this.diamondCount++;
             }
+            else if (itemType === ItemType.BOMB) {
+                // Update index if item is the bomb
+                this.updateTileIndex(this.tiles[i], 99);
+
+                // Increase mine count
+                if (this.tiles[i].pressed) this.mineCount++;
+            }
+
+            this.tiles[i].alpha = this.tiles[i].pressed ? 1 : 0.35;
+            // this.tiles[i].setSize(tileSize.width, tileSize.height);
+            if (!this.tiles[i].pressed || this.isAuto)
+                this.tiles[i].handleOpen(itemType);
+
         }
 
         // console.log(this.diamondCount, this.mineCount);
@@ -295,26 +291,15 @@ export class BoardContainer extends Container {
         tile.zIndex = zIndex;
     }
 
-    private onPickRandom() {
-        const available: { btn: Tile; i: number; j: number }[] = [];
-
-        for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
-                const btn = this.tiles[i][j];
-                if (!btn.pressed) {
-                    available.push({ btn, i, j });
-                }
-            }
-        }
+    private onPickRandom(): void {
+        const available: Tile[] = this.tiles.filter((btn) => !btn.pressed);
 
         if (available.length === 0) return;
 
-        // Random one Tile
         const randomIndex = Math.floor(Math.random() * available.length);
-        const { btn, i, j } = available[randomIndex];
+        const btn = available[randomIndex];
 
-        // Call onpress to handle random Tile clicked
-        this.onPress(btn, i, j);
+        this.onPress(btn);
     }
 
     private onAutoModeStart() {
@@ -330,7 +315,7 @@ export class BoardContainer extends Container {
     }
 
     private changeTileColor() {
-        this.tilesAPI.forEach(item => {
+        this.tiles.forEach(item => {
             item.handleSwitchMode(this.isAuto);
         });
     }

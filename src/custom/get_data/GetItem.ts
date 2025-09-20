@@ -2,12 +2,12 @@ import { ItemType } from "../_game/board/ItemType";
 import { GlobalConfig } from "../config/GlobalConfig";
 
 export class GetItem {
-  private static mockData: number[][] = [
-    [0, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 0, 1, 0, 1],
-    [1, 1, 0, 1, 1],
-    [0, 1, 1, 1, 1],
+  private static mockData: number[] = [
+    0, 1, 1, 1, 1,
+    1, 1, 1, 1, 1,
+    1, 0, 1, 0, 1,
+    1, 1, 0, 1, 1,
+    0, 1, 1, 1, 1,
   ];
 
   public static generateMatrix(mines: number) {
@@ -30,15 +30,15 @@ export class GetItem {
       }
     }
 
-    const matrix: number[][] = [];
-    for (let r = 0; r < rows; r++) {
-      matrix.push(flat.slice(r * cols, (r + 1) * cols));
+    this.mockData = flat;
+  }
+
+  public static getItemType(index: number): ItemType {
+    if (index < 0 || index >= this.mockData.length) {
+      console.error(`Invalid index ${index}, mockData length = ${this.mockData.length}`);
+      return ItemType.BOMB; // hoặc 1 giá trị mặc định
     }
-
-    this.mockData = matrix;
+    return this.mockData[index] as ItemType;
   }
 
-  public static getItemType(i: number, j: number): ItemType {
-    return this.mockData[i][j] as ItemType;
-  }
 }
