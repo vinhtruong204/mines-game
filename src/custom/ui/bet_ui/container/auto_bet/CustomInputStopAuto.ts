@@ -46,7 +46,7 @@ export class CustomInputStopAuto extends CustomInputBase {
     }
 
     private updateValue(newValue: number) {
-        this.value = String(newValue.toFixed(2));
+        this.value = String(newValue);
     }
 
     private get maxVal(): number {
