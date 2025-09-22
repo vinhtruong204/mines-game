@@ -6,6 +6,7 @@ import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 import { WinContainerEvent } from "../../../../events/WinContainerEvent";
+import { apiClient } from "../../../../get_data/ApiClient";
 import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
 import { GameState } from "../../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
@@ -70,6 +71,11 @@ export class ManualBetContainer extends BetContainer {
 
         // Initialize profitMultiplier per time
         this.profitMultiplierPerTime = (mineCount) / 10;
+
+        apiClient.bet(Number(this.betAmount.getInputAmount().value), mineCount).then((value) => {
+            console.log(value);
+        });
+
     }
 
     private onBettingCompleted() {

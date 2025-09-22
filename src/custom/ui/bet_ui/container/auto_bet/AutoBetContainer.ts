@@ -250,7 +250,7 @@ export class AutoBetContainer extends BetContainer {
             let percentIncrease = this.onWinLabelInput.getCurrentPercent();
             let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
 
-            this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
+            this.betAmount.getInputAmount().value = String(newBetValue);
         }
 
         this.checkStopAutobetting();
@@ -265,7 +265,7 @@ export class AutoBetContainer extends BetContainer {
             let percentIncrease = this.onLossLabelInput.getCurrentPercent();
             let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
 
-            this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
+            this.betAmount.getInputAmount().value = String(newBetValue);
         }
 
         this.checkStopAutobetting();

@@ -7,8 +7,6 @@ import { CreationEngine } from "./engine/engine";
  * Importing these modules will automatically register there plugins with the engine.
  */
 import "@pixi/sound";
-import { Spine } from "@esotericsoftware/spine-pixi-v8";
-// import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
 const engine = new CreationEngine();
@@ -31,17 +29,4 @@ setEngine(engine);
 
   await engine.navigation.showScreen(MainGameScreen);
 
-  // const spine = Spine.from({ skeleton: "tile.skel", atlas: "tile.atlas" });
-  // spine.position.set(500, 500);
-
-  // const crownAppear = spine.state.setAnimation(0, "color-blue", false);
-  // crownAppear.listener = {
-  //   complete: () => {
-  //     spine.state.setAnimation(1, "bomb-appear", false);
-  //   }
-  // }
-
-  // // Get all animation
-  // console.log(spine.skeleton.data.animations.map(item => item.name));
-  // engine.stage.addChild(spine);
 })();

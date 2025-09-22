@@ -1,6 +1,6 @@
-import { Container, Ticker } from "pixi.js";
+import { Container, Text, Ticker } from "pixi.js";
 import { ItemType } from "./ItemType";
-import { GetItem } from "../../get_data/GetItem";
+import { apiClient, ApiClient } from "../../get_data/ApiClient";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
@@ -37,6 +37,8 @@ export class BoardContainer extends Container {
     // Win container
     private winContainer: WinContainer;
 
+    private balanceText: Text;
+
     constructor() {
         super();
 
@@ -56,6 +58,30 @@ export class BoardContainer extends Container {
         this.addChild(this.winContainer);
 
         this.ticker = new Ticker();
+
+        
+        this.balanceText = new Text({
+            text: 'Balance',
+            style: {
+                fontFamily: 'Arial',
+                fontSize: 50,
+                fill: 'white',
+                align: 'center',
+            }
+        });
+        // this.balanceText.position.set(0, -250);
+        this.balanceText.zIndex = 100;
+        this.addChild(this.balanceText);
+
+        apiClient.fetchData().then((data) => {
+            if (data.last_activity == null) {
+                console.log("null");
+            }
+            
+            let currency = data.data.currency === "IDR" ? "Rp: " : "$: ";
+            this.balanceText.text = `${currency}` + data.data.balance;
+        });
+
     }
 
     private initBoard() {
@@ -104,7 +130,7 @@ export class BoardContainer extends Container {
         if (tile.pressed) return;
 
         let tileIndex = this.tiles.indexOf(tile);
-        let itemType = GetItem.getItemType(tileIndex);
+        let itemType = ApiClient.getItemType(tileIndex);
 
         tile.pressed = true;
         tile.handleOpen(itemType);
@@ -152,13 +178,15 @@ export class BoardContainer extends Container {
             }
 
             if (mines) {
-                this.interactiveChildren = false;
+                if (!this.firstBet)
+                    this.interactiveChildren = false;
+
                 this.resetAllTiles();
 
                 // Mock time delay for new turn (depend on animation disappear duration)
                 setTimeout(() => {
                     // Generate the matrix
-                    GetItem.generateMatrix(mines);
+                    ApiClient.generateMatrix(mines);
 
                     this.interactiveChildren = true;
 
@@ -197,7 +225,7 @@ export class BoardContainer extends Container {
 
             if (elapsed >= 1000) {
                 if (phase === PhaseAuto.REVEAL) {
-                    GetItem.generateMatrix(mines);
+                    ApiClient.generateMatrix(mines);
                     this.reavealAllTiles();
                     phase = PhaseAuto.RESET;
                 }
@@ -247,7 +275,7 @@ export class BoardContainer extends Container {
                 this.tiles[i].pressed = false;
 
             // Handle for manual -> auto mode
-            this.tiles[i].handleDisAppear(GetItem.getItemType(i));
+            this.tiles[i].handleDisAppear(ApiClient.getItemType(i));
 
             this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
 
@@ -262,7 +290,7 @@ export class BoardContainer extends Container {
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
-            const itemType = GetItem.getItemType(i);
+            const itemType = ApiClient.getItemType(i);
             if (itemType === ItemType.CROWN) {
                 // this.tiles[i].defaultView = this.getTileView("diamond.png");
 

@@ -17,7 +17,7 @@ export class BetContainer extends Container {
     constructor(x: number, y: number) {
         super({ x: x, y: y });
 
-        this.betAmount = new LabeledInput(0, 0, 200, 100, "Amount", "00.0$",
+        this.betAmount = new LabeledInput(0, 0, 200, 100, "Amount", "",
             new InputBetAmount()
         );
 

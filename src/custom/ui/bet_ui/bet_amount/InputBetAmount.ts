@@ -83,7 +83,7 @@ export class InputBetAmount extends CustomInputBase {
     }
 
     private updateValue(newValue: number) {
-        this.value = String(newValue.toFixed(2));
+        this.value = String(newValue);
     }
 
     private getButtonDefaultView(): Graphics {
