@@ -36,7 +36,7 @@ export class GetItem {
   public static getItemType(index: number): ItemType {
     if (index < 0 || index >= this.mockData.length) {
       console.error(`Invalid index ${index}, mockData length = ${this.mockData.length}`);
-      return ItemType.BOMB; // hoặc 1 giá trị mặc định
+      return ItemType.BOMB; 
     }
     return this.mockData[index] as ItemType;
   }

@@ -16,6 +16,7 @@ export enum TileAnimation {
 }
 
 export class Tile extends ButtonContainer {
+    private _canPress: boolean = false;
     private _pressed: boolean = false;
 
     private tileSpine: Spine;
@@ -39,7 +40,12 @@ export class Tile extends ButtonContainer {
     }
 
     public handleAppear() {
-        this.tileSpine.state.setAnimation(1, TileAnimation.ALL_APPEAR, false);
+        const appear = this.tileSpine.state.setAnimation(1, TileAnimation.ALL_APPEAR, false);
+        appear.listener = {
+            start: () => this._canPress = false,
+            complete: () => this._canPress = true,
+            interrupt: () => this._canPress = true
+        }
         // this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
         // this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
     }
@@ -54,10 +60,20 @@ export class Tile extends ButtonContainer {
 
         switch (itemType) {
             case ItemType.CROWN:
-                this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
+                const disappearCrown = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
+                disappearCrown.listener = {
+                    start: () => this._canPress = false,
+                    end: () => this._canPress = true,
+                    interrupt: () => this._canPress = true
+                }
                 break;
             case ItemType.BOMB:
-                this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
+                const disappearBomb = this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_DISAPPEAR, false);
+                disappearBomb.listener = {
+                    start: () => this._canPress = false,
+                    end: () => this._canPress = true,
+                    interrupt: () => this._canPress = true
+                }
                 break;
             default:
                 break;
@@ -105,4 +121,9 @@ export class Tile extends ButtonContainer {
     set pressed(value: boolean) {
         this._pressed = value;
     }
+
+    get canPress(): boolean {
+        return this._canPress;
+    }
+
 }

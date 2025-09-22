@@ -91,9 +91,8 @@ export class BoardContainer extends Container {
     }
 
     private onPress(tile: Tile) {
-        // let itemTypeTest =  GetItem.getItemType(i, j);
-        // // console.log(itemTypeTest);
-        // tile.handleOpen(itemTypeTest);
+        if (!tile.canPress) return;
+
         // Seperate logic for the auto mode 
         if (this.isAuto) {
             this.onPressAutoMode(tile);
@@ -153,12 +152,15 @@ export class BoardContainer extends Container {
             }
 
             if (mines) {
+                this.interactiveChildren = false;
                 this.resetAllTiles();
 
                 // Mock time delay for new turn (depend on animation disappear duration)
                 setTimeout(() => {
                     // Generate the matrix
                     GetItem.generateMatrix(mines);
+
+                    this.interactiveChildren = true;
 
                     // Reset all the Tiles
                     if (this.firstBet) {
