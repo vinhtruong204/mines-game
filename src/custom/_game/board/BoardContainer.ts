@@ -153,16 +153,19 @@ export class BoardContainer extends Container {
             }
 
             if (mines) {
-                // Generate the matrix
-                GetItem.generateMatrix(mines);
-
-                // Reset all the Tiles
-                if (this.firstBet) {
-                    this.firstBet = false;
-                    return;
-                }
-
                 this.resetAllTiles();
+
+                // Mock time delay for new turn (depend on animation disappear duration)
+                setTimeout(() => {
+                    // Generate the matrix
+                    GetItem.generateMatrix(mines);
+
+                    // Reset all the Tiles
+                    if (this.firstBet) {
+                        this.firstBet = false;
+                        return;
+                    }
+                }, 1000);
             }
         }
         else if (state === GameState.NOT_BETTING) {
