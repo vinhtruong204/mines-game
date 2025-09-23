@@ -14,6 +14,7 @@ import { GameState } from "../../manage_game_states/GameState";
 import { GameStateManager } from "../../manage_game_states/GameStateManager";
 import { Tile } from "../../ui/tile_button/Tile";
 import { gameService } from "../../api/services/GameService";
+import { BetApiResponse } from "../../api/models/BetResponse";
 
 const tileSize = {
     width: 128,
@@ -39,6 +40,7 @@ export class BoardContainer extends Container {
     private winContainer: WinContainer;
 
     private balanceText: Text;
+    private previousBombfield: number[] = [];
 
     constructor() {
         super();
@@ -72,19 +74,16 @@ export class BoardContainer extends Container {
         });
         // this.balanceText.position.set(0, -250);
         this.balanceText.zIndex = 100;
-        this.addChild(this.balanceText);
+        // this.addChild(this.balanceText);
 
         gameService.getLastActivity().then((response) => {
             console.log(response);
 
-            let currency = response.data.currency === "IDR" ? "Rp: " : "$: ";
-            this.balanceText.text = `${currency}` + response.data.balance;
+            // console.log("Raw data:", JSON.stringify(response.data, null, 2));
+            // console.log("last_activity:", response.data.last_activity);
+            // console.log("end_round:", response.data.last_activity?.end_round);
 
-            // Open tile previous clicked
-            response.data.last_activity.field.forEach((field) => {
-                // Open tile
-                this.onPress(this.tiles[field]);
-            });
+            this.updateBalanceText(response.data.balance, response.data.currency);
 
             // Player doesn't play game before
             if (response.data.last_activity == null) return;
@@ -99,20 +98,28 @@ export class BoardContainer extends Container {
                 gameService.postResult();
             }
 
-            // Game is'nt finished before
+            // Game isn't finished before (TODO)
             else {
                 // Disable input UI
 
                 // Open tile previous clicked
                 lastActivityData.field.forEach((field) => {
-                    // Open tile
                     this.tiles[field].handleOpen(ItemType.CROWN);
                 });
-
-
             }
 
         });
+
+        // gameService.postPick([3]);
+
+        // gameService.postCashout();
+    }
+
+    private updateBalanceText(balance: number, currency: string) {
+        // console.log(balance);
+
+        this.balanceText.text = currency === "IDR" ? "Rp: " : "$: ";
+        this.balanceText.text += String(balance);
     }
 
     private initBoard() {
@@ -147,7 +154,8 @@ export class BoardContainer extends Container {
         // console.log(this.tilesAPI)
     }
 
-    private onPress(tile: Tile) {
+    private onPress(tile: Tile, isRandom?: boolean) {
+        this.updateTileIndex(tile, 5);
         if (!tile.canPress) return;
 
         // Seperate logic for the auto mode 
@@ -160,33 +168,40 @@ export class BoardContainer extends Container {
         if (!GameStateManager.getInstance().isBetting()) return;
         if (tile.pressed) return;
 
-        let tileIndex = this.tiles.indexOf(tile);
-        let itemType = GetItem.getItemType(tileIndex);
+        let tileIndex = isRandom ? -1 : this.tiles.indexOf(tile);
+        gameService.postPick([tileIndex]).then((pickResponse) => {
+            console.log(pickResponse);
 
-        tile.pressed = true;
-        tile.handleOpen(itemType);
+            let itemType = pickResponse.data.end_round ? ItemType.BOMB : ItemType.CROWN;
 
-        // Raise event to update UI
-        globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType);
+            tile.pressed = true;
+            tile.handleOpen(itemType);
 
-        // Update default view
-        if (itemType === ItemType.CROWN) {
-            this.updateTileIndex(tile, 9);
-            // btn.defaultView = this.getTileView("diamond.png");
-        } else if (itemType === ItemType.BOMB) {
-            // btn.defaultView = this.getTileView("bomb.png");
-            this.updateTileIndex(tile, 99);
+            // Raise event to update UI
+            globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType, pickResponse);
 
-            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+            // Update default view
+            if (itemType === ItemType.CROWN) {
+                this.updateTileIndex(tile, 9);
+                // btn.defaultView = this.getTileView("diamond.png");
+            } else if (itemType === ItemType.BOMB) {
+                this.updateTileIndex(tile, 99);
+                gameService.postResult().then((resultData) => {
+                    console.log(resultData);
 
-            // Reveal all the Tiles
-            this.reavealAllTiles();
-        }
-        // gameService.postPick([tileIndex]).then((pickResponse) => {
-        //     console.log(pickResponse);
+                    this.updateBalanceText(resultData.data.balance, resultData.data.currency);
 
-        // });
+                    // btn.defaultView = this.getTileView("bomb.png");
 
+                    GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+
+                    this.previousBombfield = pickResponse.data.bomb_field;
+
+                    // Reveal all the Tiles
+                    this.reavealAllTiles();
+                });
+            }
+        });
     }
 
     private onPressAutoMode(tile: Tile) {
@@ -206,7 +221,7 @@ export class BoardContainer extends Container {
     }
 
     private firstBet: boolean = true;
-    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
+    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1, betResponse?: BetApiResponse) {
         if (state === GameState.BETTING) {
             if (this.isAuto && numberOfGames !== -1) {
                 this.handleStartAutoBet(mines, numberOfGames);
@@ -214,8 +229,14 @@ export class BoardContainer extends Container {
             }
 
             if (mines) {
-                if (!this.firstBet)
+                if (betResponse) {
+                    this.updateBalanceText(betResponse.data.balance, betResponse.data.currency);
+                }
+
+
+                if (!this.firstBet) {
                     this.interactiveChildren = false;
+                }
 
                 this.resetAllTiles();
 
@@ -241,7 +262,19 @@ export class BoardContainer extends Container {
                 return;
             }
 
-            this.reavealAllTiles();
+            gameService.postCashout().then((cashoutResponse) => {
+                console.log(cashoutResponse);
+
+                if (cashoutResponse.data?.end_round) {
+                    this.previousBombfield = cashoutResponse.data.bomb_field;
+
+                    gameService.postResult().then((data) => {
+                        console.log(data);
+                    });
+                }
+
+                this.reavealAllTiles();
+            })
         }
     }
 
@@ -311,7 +344,8 @@ export class BoardContainer extends Container {
                 this.tiles[i].pressed = false;
 
             // Handle for manual -> auto mode
-            this.tiles[i].handleDisAppear(GetItem.getItemType(i));
+            let itemType = this.previousBombfield.includes(i) ? ItemType.BOMB : ItemType.CROWN;
+            this.tiles[i].handleDisAppear(itemType);
 
             this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
 
@@ -326,7 +360,7 @@ export class BoardContainer extends Container {
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
-            const itemType = GetItem.getItemType(i);
+            const itemType = this.previousBombfield.includes(i) ? ItemType.BOMB : ItemType.CROWN;
             if (itemType === ItemType.CROWN) {
                 // this.tiles[i].defaultView = this.getTileView("diamond.png");
 
@@ -363,7 +397,7 @@ export class BoardContainer extends Container {
         const randomIndex = Math.floor(Math.random() * available.length);
         const btn = available[randomIndex];
 
-        this.onPress(btn);
+        this.onPress(btn, true);
     }
 
     private onAutoModeStart() {

@@ -1,13 +1,13 @@
 
 import { Button } from "../../../../../app/ui/Button";
 import { ItemType } from "../../../../_game/board/ItemType";
+import { PickApiResponse } from "../../../../api/models/PickResponse";
 import { gameService } from "../../../../api/services/GameService";
 import { GlobalConfig } from "../../../../config/GlobalConfig";
 import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 import { WinContainerEvent } from "../../../../events/WinContainerEvent";
-import { apiClient } from "../../../../get_data/GetItem";
 import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
 import { GameState } from "../../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
@@ -21,7 +21,7 @@ export class ManualBetContainer extends BetContainer {
     private diamondCollected: number = 0;
 
     // Increase per time when player press a diamond(depend on number of mines)
-    private profitMultiplierPerTime: number = 0;
+    // private profitMultiplierPerTime: number = 0;
 
     private betButton: Button;
 
@@ -58,29 +58,26 @@ export class ManualBetContainer extends BetContainer {
 
     private onBetButtonClicked() {
         const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
-        
+
         // Call api 
         gameService.postBet(Number(this.betAmount.getInputAmount().value), mineCount).then((betResponse) => {
             console.log(betResponse);
-        });
+            if (betResponse.data.end_round) return;
 
-        GameStateManager.getInstance().setState(GameState.BETTING);
+            GameStateManager.getInstance().setState(GameState.BETTING);
 
-        // Emit event to generate the board
-        globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount);
+            // Emit event to generate the board
+            globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount, -1, betResponse);
 
-        // Emit event to disable win container
-        globalEmitter.emit(WinContainerEvent.DIASABLE);
+            // Emit event to disable win container
+            globalEmitter.emit(WinContainerEvent.DIASABLE);
 
-        // Initialize diamond count
-        this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (mineCount);
-        this.diamondCollected = 0;
+            // Initialize diamond count
+            this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (mineCount);
+            this.diamondCollected = 0;
 
-        // Initialize profitMultiplier per time
-        this.profitMultiplierPerTime = (mineCount) / 10;
-
-        apiClient.bet(Number(this.betAmount.getInputAmount().value), mineCount).then((value) => {
-            console.log(value);
+            // Initialize profitMultiplier per time
+            // this.profitMultiplierPerTime = (mineCount) / 10;
         });
 
     }
@@ -89,7 +86,7 @@ export class ManualBetContainer extends BetContainer {
         GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
         // Enable win container
-        globalEmitter.emit(WinContainerEvent.ENABLE, this.getProfitMultipler(), this.getTotalProfit());
+        // globalEmitter.emit(WinContainerEvent.ENABLE, this.getProfitMultipler(), this.getTotalProfit());
     }
 
     private onGameStateChange(state: GameState) {
@@ -119,22 +116,22 @@ export class ManualBetContainer extends BetContainer {
         }
     }
 
-    private onItemPressed(itemType: ItemType) {
+    private onItemPressed(itemType: ItemType, pickResponse: PickApiResponse) {
         if (itemType === ItemType.CROWN) {
             this.diamondCollected++;
 
-            this.manualBettingContainer.setGameConfig(null, --this.diamondRemain, this.getTotalProfit(), this.getProfitMultipler());
+            this.manualBettingContainer.setGameConfig(null, --this.diamondRemain, pickResponse.data.total_win, pickResponse.data.multiplier);
         } else if (itemType === ItemType.BOMB) {
             this.manualBettingContainer.setGameConfig(null, this.diamondRemain, 0);
         }
     }
 
-    private getTotalProfit(): number {
-        let profitMultiplier = this.getProfitMultipler();
-        return Number(this.betAmount.getInputAmount().value) * profitMultiplier;
-    }
+    // private getTotalProfit(): number {
+    //     let profitMultiplier = this.getProfitMultipler();
+    //     return Number(this.betAmount.getInputAmount().value) * profitMultiplier;
+    // }
 
-    private getProfitMultipler(): number {
-        return 1 + this.diamondCollected * this.profitMultiplierPerTime;
-    }
+    // private getProfitMultipler(): number {
+    //     return 1 + this.diamondCollected * this.profitMultiplierPerTime;
+    // }
 }

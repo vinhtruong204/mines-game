@@ -104,5 +104,3 @@ export class GetItem {
   }
 
 }
-
-export const apiClient = new GetItem();

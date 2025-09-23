@@ -1,6 +1,6 @@
 export var production = false;
 
-export const TOKEN = "465f9913a7d9e915978ba3f1debcf6d9237d92f450214a0d6a61f323791b72a3";
+export const TOKEN = "9850b8d77d079689b6c2bb4b5132f7a2809d0b8192884ade0b77b6a2ad76a2d4";
 
 export function getBaseUrl(): string {
     return production ? "https://mngs.nasisoto.org/minigames/" : "api/minigames/";

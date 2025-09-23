@@ -5,6 +5,7 @@ import { LastActivityApiResponse } from "../models/LastActivityResponse";
 import { BetApiResponse } from "../models/BetResponse";
 import { PickApiResponse } from "../models/PickResponse";
 import { CashoutApiResponse } from "../models/CashoutResponse";
+import { ResultApiResponse } from "../models/ResultResponse";
 
 export class GameService {
     constructor(private api: IApiClient) { }
@@ -30,15 +31,15 @@ export class GameService {
         );
     }
 
-    public cashout(): Promise<CashoutApiResponse> {
+    public postCashout(): Promise<CashoutApiResponse> {
         return this.api.post<CashoutApiResponse>(
             `${ApiRoute.CASHOUT}`,
             { token: TOKEN }
         );
     }
 
-    public postResult(): Promise<CashoutApiResponse> {
-        return this.api.post<CashoutApiResponse>(
+    public postResult(): Promise<ResultApiResponse> {
+        return this.api.post<ResultApiResponse>(
             `${ApiRoute.RESULT}`,
             { token: TOKEN }
         );
