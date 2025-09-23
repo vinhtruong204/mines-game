@@ -6,6 +6,7 @@ import { ItemType } from "../../../../_game/board/ItemType";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 import { engine } from "../../../../../app/getEngine";
+import { gameService } from "../../../../api/services/GameService";
 
 const defaultInputFieldSize = {
     width: 350,
@@ -213,6 +214,13 @@ export class ManualBettingContainer extends Container {
     }
 
     private handleWithdrawButtonClicked() {
+        gameService.cashout().then((cashoutResponse) => {
+            console.log(cashoutResponse);
+            gameService.postResult().then((data) => {
+                console.log(data);
+            });
+        })
+
         // Container betting progress notice completed
         this.onBettingCompleted?.();
 

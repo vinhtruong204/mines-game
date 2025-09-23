@@ -1,6 +1,6 @@
 import { Container, Text, Ticker } from "pixi.js";
 import { ItemType } from "./ItemType";
-import { apiClient, ApiClient } from "../../get_data/ApiClient";
+import { GetItem } from "../../get_data/GetItem";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
@@ -13,6 +13,7 @@ import { GlobalConfig } from "../../config/GlobalConfig";
 import { GameState } from "../../manage_game_states/GameState";
 import { GameStateManager } from "../../manage_game_states/GameStateManager";
 import { Tile } from "../../ui/tile_button/Tile";
+import { gameService } from "../../api/services/GameService";
 
 const tileSize = {
     width: 128,
@@ -59,7 +60,7 @@ export class BoardContainer extends Container {
 
         this.ticker = new Ticker();
 
-        
+
         this.balanceText = new Text({
             text: 'Balance',
             style: {
@@ -73,15 +74,45 @@ export class BoardContainer extends Container {
         this.balanceText.zIndex = 100;
         this.addChild(this.balanceText);
 
-        apiClient.fetchData().then((data) => {
-            if (data.last_activity == null) {
-                console.log("null");
-            }
-            
-            let currency = data.data.currency === "IDR" ? "Rp: " : "$: ";
-            this.balanceText.text = `${currency}` + data.data.balance;
-        });
+        gameService.getLastActivity().then((response) => {
+            console.log(response);
 
+            let currency = response.data.currency === "IDR" ? "Rp: " : "$: ";
+            this.balanceText.text = `${currency}` + response.data.balance;
+
+            // Open tile previous clicked
+            response.data.last_activity.field.forEach((field) => {
+                // Open tile
+                this.onPress(this.tiles[field]);
+            });
+
+            // Player doesn't play game before
+            if (response.data.last_activity == null) return;
+
+            const lastActivityData = response.data.last_activity;
+
+            // Previous game has finished and already calculated result on BE server
+            if (lastActivityData.is_settle) return;
+
+            // If previous game has finished but not send post result
+            if (lastActivityData.end_round) {
+                gameService.postResult();
+            }
+
+            // Game is'nt finished before
+            else {
+                // Disable input UI
+
+                // Open tile previous clicked
+                lastActivityData.field.forEach((field) => {
+                    // Open tile
+                    this.tiles[field].handleOpen(ItemType.CROWN);
+                });
+
+
+            }
+
+        });
     }
 
     private initBoard() {
@@ -130,7 +161,7 @@ export class BoardContainer extends Container {
         if (tile.pressed) return;
 
         let tileIndex = this.tiles.indexOf(tile);
-        let itemType = ApiClient.getItemType(tileIndex);
+        let itemType = GetItem.getItemType(tileIndex);
 
         tile.pressed = true;
         tile.handleOpen(itemType);
@@ -151,6 +182,11 @@ export class BoardContainer extends Container {
             // Reveal all the Tiles
             this.reavealAllTiles();
         }
+        // gameService.postPick([tileIndex]).then((pickResponse) => {
+        //     console.log(pickResponse);
+
+        // });
+
     }
 
     private onPressAutoMode(tile: Tile) {
@@ -186,7 +222,7 @@ export class BoardContainer extends Container {
                 // Mock time delay for new turn (depend on animation disappear duration)
                 setTimeout(() => {
                     // Generate the matrix
-                    ApiClient.generateMatrix(mines);
+                    // GetItem.generateMatrix(mines);
 
                     this.interactiveChildren = true;
 
@@ -225,7 +261,7 @@ export class BoardContainer extends Container {
 
             if (elapsed >= 1000) {
                 if (phase === PhaseAuto.REVEAL) {
-                    ApiClient.generateMatrix(mines);
+                    GetItem.generateMatrix(mines);
                     this.reavealAllTiles();
                     phase = PhaseAuto.RESET;
                 }
@@ -275,7 +311,7 @@ export class BoardContainer extends Container {
                 this.tiles[i].pressed = false;
 
             // Handle for manual -> auto mode
-            this.tiles[i].handleDisAppear(ApiClient.getItemType(i));
+            this.tiles[i].handleDisAppear(GetItem.getItemType(i));
 
             this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
 
@@ -290,7 +326,7 @@ export class BoardContainer extends Container {
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
-            const itemType = ApiClient.getItemType(i);
+            const itemType = GetItem.getItemType(i);
             if (itemType === ItemType.CROWN) {
                 // this.tiles[i].defaultView = this.getTileView("diamond.png");
 

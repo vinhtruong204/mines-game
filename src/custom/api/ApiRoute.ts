@@ -1,10 +1,11 @@
 export var production = false;
 
-export const TOKEN = "50bea005046c2df0a8c3d3ae095b18a062ce61dce0ba877a898b5bd634f3c847"
+export const TOKEN = "465f9913a7d9e915978ba3f1debcf6d9237d92f450214a0d6a61f323791b72a3";
 
 export function getBaseUrl(): string {
     return production ? "https://mngs.nasisoto.org/minigames/" : "api/minigames/";
 }
+
 export enum ApiRoute {
     LAST_ACTIVITY = "last-activity",
     BET = "bet",

@@ -1,8 +1,8 @@
 import { ItemType } from "../_game/board/ItemType";
 import { GlobalConfig } from "../config/GlobalConfig";
-import { ApiRoute, getBaseUrl, TOKEN } from "./ApiRoute";
+import { ApiRoute, getBaseUrl, TOKEN } from "../api/ApiRoute";
 
-export class ApiClient {
+export class GetItem {
   private static mockData: number[] = [
     0, 1, 1, 1, 1,
     1, 1, 1, 1, 1,
@@ -105,4 +105,4 @@ export class ApiClient {
 
 }
 
-export const apiClient = new ApiClient();
+export const apiClient = new GetItem();

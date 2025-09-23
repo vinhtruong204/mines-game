@@ -1,12 +1,13 @@
 
 import { Button } from "../../../../../app/ui/Button";
 import { ItemType } from "../../../../_game/board/ItemType";
+import { gameService } from "../../../../api/services/GameService";
 import { GlobalConfig } from "../../../../config/GlobalConfig";
 import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 import { WinContainerEvent } from "../../../../events/WinContainerEvent";
-import { apiClient } from "../../../../get_data/ApiClient";
+import { apiClient } from "../../../../get_data/GetItem";
 import { GetNumberOfMines } from "../../../../get_data/GetNumberOfMines";
 import { GameState } from "../../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
@@ -57,6 +58,12 @@ export class ManualBetContainer extends BetContainer {
 
     private onBetButtonClicked() {
         const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
+        
+        // Call api 
+        gameService.postBet(Number(this.betAmount.getInputAmount().value), mineCount).then((betResponse) => {
+            console.log(betResponse);
+        });
+
         GameStateManager.getInstance().setState(GameState.BETTING);
 
         // Emit event to generate the board
