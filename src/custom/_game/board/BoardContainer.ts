@@ -15,6 +15,10 @@ import { GameStateManager } from "../../manage_game_states/GameStateManager";
 import { Tile } from "../../ui/tile_button/Tile";
 import { gameService } from "../../api/services/GameService";
 import { BetApiResponse } from "../../api/models/BetResponse";
+import { ApiEvent } from "../../events/api/ApiEvent";
+import { LastActivityApiResponse } from "../../api/models/LastActivityResponse";
+import { CashoutApiResponse } from "../../api/models/CashoutResponse";
+import { ResultApiResponse } from "../../api/models/ResultResponse";
 
 const tileSize = {
     width: 128,
@@ -53,6 +57,12 @@ export class BoardContainer extends Container {
         globalEmitter.on(GameModeChangeEvent.AUTO, this.onAutoModeStart.bind(this));
         globalEmitter.on(GameModeChangeEvent.MANUAL, this.onAutoModeStop.bind(this));
 
+        // Listensers for the response from api
+        globalEmitter.on(ApiEvent.LAST_ACTIVITY_RESPONSE, this.onLastActivityResponse.bind(this));
+        globalEmitter.on(ApiEvent.BET_RESPONSE, this.onBetResponse.bind(this));
+        globalEmitter.on(ApiEvent.CASHOUT_RESPONSE, this.onCashoutResponse.bind(this));
+        globalEmitter.on(ApiEvent.RESULT_RESPONSE, this.onResultResponse.bind(this));
+
         this.winContainer = new WinContainer();
 
         this.sortableChildren = true;
@@ -74,45 +84,60 @@ export class BoardContainer extends Container {
         });
         // this.balanceText.position.set(0, -250);
         this.balanceText.zIndex = 100;
-        // this.addChild(this.balanceText);
-
-        gameService.getLastActivity().then((response) => {
-            console.log(response);
-
-            // console.log("Raw data:", JSON.stringify(response.data, null, 2));
-            // console.log("last_activity:", response.data.last_activity);
-            // console.log("end_round:", response.data.last_activity?.end_round);
-
-            this.updateBalanceText(response.data.balance, response.data.currency);
-
-            // Player doesn't play game before
-            if (response.data.last_activity == null) return;
-
-            const lastActivityData = response.data.last_activity;
-
-            // Previous game has finished and already calculated result on BE server
-            if (lastActivityData.is_settle) return;
-
-            // If previous game has finished but not send post result
-            if (lastActivityData.end_round) {
-                gameService.postResult();
-            }
-
-            // Game isn't finished before (TODO)
-            else {
-                // Disable input UI
-
-                // Open tile previous clicked
-                lastActivityData.field.forEach((field) => {
-                    this.tiles[field].handleOpen(ItemType.CROWN);
-                });
-            }
-
-        });
+        this.addChild(this.balanceText);
 
         // gameService.postPick([3]);
 
         // gameService.postCashout();
+    }
+
+    private onBetResponse(betResponse: BetApiResponse) {
+        this.updateBalanceText(betResponse.data.balance, betResponse.data.currency);
+    }
+
+    private onResultResponse(resultResponse: ResultApiResponse) {
+        this.updateBalanceText(resultResponse.data.balance, resultResponse.data.currency);
+    }
+
+    private onCashoutResponse(cashoutResponse: CashoutApiResponse) {
+        if (cashoutResponse.data?.end_round) {
+            this.previousBombfield = cashoutResponse.data.bomb_field;
+        }
+
+        this.reavealAllTiles();
+    }
+
+    private onLastActivityResponse(response: LastActivityApiResponse) {
+        console.log(response);
+
+        // console.log("Raw data:", JSON.stringify(response.data, null, 2));
+        // console.log("last_activity:", response.data.last_activity);
+        // console.log("end_round:", response.data.last_activity?.end_round);
+
+        this.updateBalanceText(response.data.balance, response.data.currency);
+
+        // Player doesn't play game before
+        if (response.data.last_activity == null) return;
+
+        const lastActivityData = response.data.last_activity;
+
+        // Previous game has finished and already calculated result on BE server
+        if (lastActivityData.is_settle) return;
+
+        // If previous game has finished but not send post result
+        if (lastActivityData.end_round) {
+            gameService.postResult().then((resultResponse) => globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse));
+        }
+
+        // Game isn't finished before (TODO)
+        else {
+            // Disable input UI
+
+            // Open tile previous clicked
+            lastActivityData.field.forEach((field) => {
+                this.tiles[field].handleOpen(ItemType.CROWN);
+            });
+        }
     }
 
     private updateBalanceText(balance: number, currency: string) {
@@ -151,6 +176,7 @@ export class BoardContainer extends Container {
         }
 
         // this.tilesAPI = this.tiles.flat();
+        // gameService.postCashout();
         // console.log(this.tilesAPI)
     }
 
@@ -170,7 +196,8 @@ export class BoardContainer extends Container {
 
         let tileIndex = isRandom ? -1 : this.tiles.indexOf(tile);
         gameService.postPick([tileIndex]).then((pickResponse) => {
-            console.log(pickResponse);
+            // Emit pick response to update ui
+            globalEmitter.emit(ApiEvent.PICK_RESPONSE, pickResponse);
 
             let itemType = pickResponse.data.end_round ? ItemType.BOMB : ItemType.CROWN;
 
@@ -178,28 +205,21 @@ export class BoardContainer extends Container {
             tile.handleOpen(itemType);
 
             // Raise event to update UI
-            globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType, pickResponse);
+            globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType);
 
             // Update default view
             if (itemType === ItemType.CROWN) {
                 this.updateTileIndex(tile, 9);
-                // btn.defaultView = this.getTileView("diamond.png");
             } else if (itemType === ItemType.BOMB) {
                 this.updateTileIndex(tile, 99);
-                gameService.postResult().then((resultData) => {
-                    console.log(resultData);
 
-                    this.updateBalanceText(resultData.data.balance, resultData.data.currency);
+                this.previousBombfield = pickResponse.data.bomb_field;
 
-                    // btn.defaultView = this.getTileView("bomb.png");
+                GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-                    GameStateManager.getInstance().setState(GameState.NOT_BETTING);
-
-                    this.previousBombfield = pickResponse.data.bomb_field;
-
-                    // Reveal all the Tiles
-                    this.reavealAllTiles();
-                });
+                // Reveal all the Tiles
+                this.reavealAllTiles();
+                gameService.postResult().then((resultResponse) => globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse));
             }
         });
     }
@@ -221,7 +241,7 @@ export class BoardContainer extends Container {
     }
 
     private firstBet: boolean = true;
-    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1, betResponse?: BetApiResponse) {
+    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
         if (state === GameState.BETTING) {
             if (this.isAuto && numberOfGames !== -1) {
                 this.handleStartAutoBet(mines, numberOfGames);
@@ -229,10 +249,6 @@ export class BoardContainer extends Container {
             }
 
             if (mines) {
-                if (betResponse) {
-                    this.updateBalanceText(betResponse.data.balance, betResponse.data.currency);
-                }
-
 
                 if (!this.firstBet) {
                     this.interactiveChildren = false;
@@ -261,20 +277,6 @@ export class BoardContainer extends Container {
                 this.ticker.stop();
                 return;
             }
-
-            gameService.postCashout().then((cashoutResponse) => {
-                console.log(cashoutResponse);
-
-                if (cashoutResponse.data?.end_round) {
-                    this.previousBombfield = cashoutResponse.data.bomb_field;
-
-                    gameService.postResult().then((data) => {
-                        console.log(data);
-                    });
-                }
-
-                this.reavealAllTiles();
-            })
         }
     }
 

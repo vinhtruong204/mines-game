@@ -1,6 +1,8 @@
 import { Container, Graphics, Text } from "pixi.js";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { WinContainerEvent } from "../../events/WinContainerEvent";
+import { ApiEvent } from "../../events/api/ApiEvent";
+import { CashoutApiResponse } from "../../api/models/CashoutResponse";
 
 const defaultWinContainerSize = {
     width: 200,
@@ -12,6 +14,8 @@ export class WinContainer extends Container {
 
     constructor() {
         super();
+
+        globalEmitter.on(ApiEvent.CASHOUT_RESPONSE, this.onCashoutResponse.bind(this));
 
         globalEmitter.on(WinContainerEvent.ENABLE, this.onWinContainerEnable.bind(this));
         globalEmitter.on(WinContainerEvent.DIASABLE, this.onWinContainerDisable.bind(this));
@@ -40,6 +44,11 @@ export class WinContainer extends Container {
         this.visible = false;
 
         this.zIndex = 100;
+    }
+
+    private onCashoutResponse(cashoutResponse: CashoutApiResponse) {
+        this.winInforText.text = `${cashoutResponse.data.multiplier.toFixed(2)}x \n\n${cashoutResponse.data.total_win.toFixed(2)}`;
+        this.visible = true;
     }
 
     private onWinContainerEnable(profitMultiplier: number, totalProfit: number) {

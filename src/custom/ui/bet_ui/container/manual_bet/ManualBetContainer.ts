@@ -4,6 +4,7 @@ import { ItemType } from "../../../../_game/board/ItemType";
 import { PickApiResponse } from "../../../../api/models/PickResponse";
 import { gameService } from "../../../../api/services/GameService";
 import { GlobalConfig } from "../../../../config/GlobalConfig";
+import { ApiEvent } from "../../../../events/api/ApiEvent";
 import { GameStateEvent } from "../../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
@@ -27,6 +28,9 @@ export class ManualBetContainer extends BetContainer {
 
     constructor(x: number, y: number) {
         super(x, y);
+
+        // Response from pick response
+        globalEmitter.on(ApiEvent.PICK_RESPONSE, this.onPickResponse.bind(this));
 
         // Register callback when user click a mine 
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
@@ -56,6 +60,16 @@ export class ManualBetContainer extends BetContainer {
         // this.addChild(this.manualBettingContainer);
     }
 
+    private onPickResponse(pickResponse: PickApiResponse) {
+        if (pickResponse.data.end_round) return;
+
+        this.manualBettingContainer.setGameConfig(
+            pickResponse.data.bomb_count,
+            --this.diamondRemain,
+            pickResponse.data.total_win,
+            pickResponse.data.multiplier);
+    }
+
     private onBetButtonClicked() {
         const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
 
@@ -66,8 +80,11 @@ export class ManualBetContainer extends BetContainer {
 
             GameStateManager.getInstance().setState(GameState.BETTING);
 
+            // Emit event response
+            globalEmitter.emit(ApiEvent.BET_RESPONSE, betResponse);
+
             // Emit event to generate the board
-            globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount, -1, betResponse);
+            globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount);
 
             // Emit event to disable win container
             globalEmitter.emit(WinContainerEvent.DIASABLE);
@@ -86,7 +103,7 @@ export class ManualBetContainer extends BetContainer {
         GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
         // Enable win container
-        // globalEmitter.emit(WinContainerEvent.ENABLE, this.getProfitMultipler(), this.getTotalProfit());
+        // globalEmitter.emit(WinContainerEvent.ENABLE);
     }
 
     private onGameStateChange(state: GameState) {
@@ -116,11 +133,9 @@ export class ManualBetContainer extends BetContainer {
         }
     }
 
-    private onItemPressed(itemType: ItemType, pickResponse: PickApiResponse) {
+    private onItemPressed(itemType: ItemType) {
         if (itemType === ItemType.CROWN) {
             this.diamondCollected++;
-
-            this.manualBettingContainer.setGameConfig(null, --this.diamondRemain, pickResponse.data.total_win, pickResponse.data.multiplier);
         } else if (itemType === ItemType.BOMB) {
             this.manualBettingContainer.setGameConfig(null, this.diamondRemain, 0);
         }

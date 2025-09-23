@@ -6,6 +6,8 @@ import { ItemType } from "../../../../_game/board/ItemType";
 import { globalEmitter } from "../../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../../events/manual_betting_events/ManualBettingEvent";
 import { engine } from "../../../../../app/getEngine";
+import { ApiEvent } from "../../../../events/api/ApiEvent";
+import { gameService } from "../../../../api/services/GameService";
 
 const defaultInputFieldSize = {
     width: 350,
@@ -86,7 +88,7 @@ export class ManualBettingContainer extends Container {
         });
         this.cashoutButton.anchor.set(0, 0);
         this.cashoutButton.position.set(this.randomPickButton.x, this.randomPickButton.y + this.randomPickButton.height + 20);
-        this.cashoutButton.onPress.connect(this.handleWithdrawButtonClicked.bind(this));
+        this.cashoutButton.onPress.connect(this.handleCashoutButtonClicked.bind(this));
         this.cashoutButton.visible = false;
 
         // Disable for the first time
@@ -212,13 +214,27 @@ export class ManualBettingContainer extends Container {
         else this.totalProfit.setLeftLabelText('Total profit (1.00x)');
     }
 
-    private handleWithdrawButtonClicked() {
+    private handleCashoutButtonClicked() {
         // Container betting progress notice completed
         this.onBettingCompleted?.();
 
         // Disable cashout button when betting is completed
         this.cashoutButton.alpha = 0.5;
         this.cashoutButton.interactive = false;
+
+        gameService.postCashout().then((cashoutResponse) => {
+            globalEmitter.emit(ApiEvent.CASHOUT_RESPONSE, cashoutResponse);
+
+            console.log(cashoutResponse);
+
+            if (cashoutResponse.data?.end_round) {
+                gameService.postResult().then((resultResponse) => {
+                    globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse);
+                    console.log(resultResponse);
+                });
+            }
+        });
+
     }
 
     private onRandomPickClicked() {

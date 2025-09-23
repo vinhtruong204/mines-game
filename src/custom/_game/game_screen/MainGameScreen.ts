@@ -6,6 +6,9 @@ import { Spine } from "@esotericsoftware/spine-pixi-v8";
 import { SettingsPopup } from "../../../app/popups/SettingsPopup";
 import { GameMode } from "../../ui/bet_ui/mines_ui/GameMode";
 import { BackgroundAnimation } from "./BackgroundAnimation";
+import { gameService } from "../../api/services/GameService";
+import { ApiEvent } from "../../events/api/ApiEvent";
+import { globalEmitter } from "../../events/GlobalEmitter";
 
 const safeZoneSize = {
     width: 720,
@@ -18,8 +21,6 @@ const bgSpineOffset = {
     x: 360,
     y: 780
 };
-
-const uiManagerOffsetX = 50;
 
 export class MainGameScreen extends Container {
     /** Assets bundles required by this screen */
@@ -40,6 +41,14 @@ export class MainGameScreen extends Container {
         super();
 
         this.boardContainer = new BoardContainer();
+
+        // Get last activity data 
+        gameService.getLastActivity().then((response) => {
+            // console.log(response);
+
+            globalEmitter.emit(ApiEvent.LAST_ACTIVITY_RESPONSE, response);
+        });
+
 
         this.bg = Sprite.from(`bg.jpg`);
         this.bgSpine = Spine.from({ skeleton: "bg.skel", atlas: "bg.atlas" });
