@@ -1,6 +1,7 @@
 
 import { Button } from "../../../../../app/ui/Button";
 import { ItemType } from "../../../../_game/board/ItemType";
+import { LastActivityApiResponse } from "../../../../api/models/LastActivityResponse";
 import { PickApiResponse } from "../../../../api/models/PickResponse";
 import { gameService } from "../../../../api/services/GameService";
 import { GlobalConfig } from "../../../../config/GlobalConfig";
@@ -29,6 +30,10 @@ export class ManualBetContainer extends BetContainer {
     constructor(x: number, y: number) {
         super(x, y);
 
+        // Get response data from last activity
+        globalEmitter.on(ApiEvent.LAST_ACTIVITY_RESPONSE, this.onLastActivityResponse.bind(this));
+
+
         // Response from pick response
         globalEmitter.on(ApiEvent.PICK_RESPONSE, this.onPickResponse.bind(this));
 
@@ -37,6 +42,7 @@ export class ManualBetContainer extends BetContainer {
 
         // Register listener to handle item pressed event
         globalEmitter.on(ManualBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
+
 
         this.manualBettingContainer = new ManualBettingContainer(this.selectModeGroup.x, this.selectModeGroup.y);
 
@@ -60,6 +66,20 @@ export class ManualBetContainer extends BetContainer {
         // this.addChild(this.manualBettingContainer);
     }
 
+    private onLastActivityResponse(lastActivityResponse: LastActivityApiResponse) {
+        if (lastActivityResponse.data.last_activity == null ||
+            lastActivityResponse.data.last_activity.is_settle ||
+            lastActivityResponse.data.last_activity.end_round) return;
+
+        this.manualBettingContainer.setGameConfig(
+            lastActivityResponse.data.last_activity.bomb_count,
+            GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - lastActivityResponse.data.last_activity.bomb_count,
+            lastActivityResponse.data.last_activity.total_win,
+            lastActivityResponse.data.last_activity.multiplier
+        )
+    }
+
+
     private onPickResponse(pickResponse: PickApiResponse) {
         if (pickResponse.data.end_round) return;
 
@@ -72,26 +92,24 @@ export class ManualBetContainer extends BetContainer {
 
     private onBetButtonClicked() {
         const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
+        GameStateManager.getInstance().setState(GameState.BETTING);
+        // Emit event to generate the board
+        globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount);
+
+        // Emit event to disable win container
+        globalEmitter.emit(WinContainerEvent.DIASABLE);
+
+        // Initialize diamond count
+        this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (mineCount);
+        this.diamondCollected = 0;
 
         // Call api 
         gameService.postBet(Number(this.betAmount.getInputAmount().value), mineCount).then((betResponse) => {
             console.log(betResponse);
             if (betResponse.data.end_round) return;
 
-            GameStateManager.getInstance().setState(GameState.BETTING);
-
             // Emit event response
             globalEmitter.emit(ApiEvent.BET_RESPONSE, betResponse);
-
-            // Emit event to generate the board
-            globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount);
-
-            // Emit event to disable win container
-            globalEmitter.emit(WinContainerEvent.DIASABLE);
-
-            // Initialize diamond count
-            this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (mineCount);
-            this.diamondCollected = 0;
 
             // Initialize profitMultiplier per time
             // this.profitMultiplierPerTime = (mineCount) / 10;

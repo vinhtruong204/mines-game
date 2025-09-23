@@ -74,7 +74,7 @@ export class BoardContainer extends Container {
 
 
         this.balanceText = new Text({
-            text: 'Balance',
+            text: 'Rp: ',
             style: {
                 fontFamily: 'Arial',
                 fontSize: 50,
@@ -108,7 +108,7 @@ export class BoardContainer extends Container {
     }
 
     private onLastActivityResponse(response: LastActivityApiResponse) {
-        console.log(response);
+        // console.log(response);
 
         // console.log("Raw data:", JSON.stringify(response.data, null, 2));
         // console.log("last_activity:", response.data.last_activity);
@@ -124,19 +124,24 @@ export class BoardContainer extends Container {
         // Previous game has finished and already calculated result on BE server
         if (lastActivityData.is_settle) return;
 
+        // Open tile previous clicked
+        lastActivityData.field.forEach((index) => {
+            this.tiles[index].pressed = true;
+            this.tiles[index].handleOpen(ItemType.CROWN);
+        });
+
         // If previous game has finished but not send post result
         if (lastActivityData.end_round) {
             gameService.postResult().then((resultResponse) => globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse));
+
+            this.previousBombfield = lastActivityData.bomb_field;
+            this.reavealAllTiles();
+            return;
         }
 
         // Game isn't finished before (TODO)
         else {
-            // Disable input UI
-
-            // Open tile previous clicked
-            lastActivityData.field.forEach((field) => {
-                this.tiles[field].handleOpen(ItemType.CROWN);
-            });
+            GameStateManager.getInstance().setState(GameState.BETTING);
         }
     }
 
@@ -198,6 +203,11 @@ export class BoardContainer extends Container {
         gameService.postPick([tileIndex]).then((pickResponse) => {
             // Emit pick response to update ui
             globalEmitter.emit(ApiEvent.PICK_RESPONSE, pickResponse);
+
+            if (isRandom) {
+                tileIndex = pickResponse.data.field[pickResponse.data.field.length - 1];
+                tile = this.tiles[tileIndex];
+            }
 
             let itemType = pickResponse.data.end_round ? ItemType.BOMB : ItemType.CROWN;
 
@@ -371,7 +381,7 @@ export class BoardContainer extends Container {
             }
             else if (itemType === ItemType.BOMB) {
                 // Update index if item is the bomb
-                this.updateTileIndex(this.tiles[i], 99);
+                this.updateTileIndex(this.tiles[i], 100);
 
                 // Increase mine count
                 if (this.tiles[i].pressed) this.mineCount++;
