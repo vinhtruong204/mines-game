@@ -136,6 +136,8 @@ export class BoardContainer extends Container {
 
             this.previousBombfield = lastActivityData.bomb_field;
             this.reavealAllTiles();
+
+            globalEmitter.emit(WinContainerEvent.ENABLE, response.data.last_activity.multiplier, response.data.last_activity.total_win);
             return;
         }
 
