@@ -1,6 +1,5 @@
 import { Container, Text, Ticker } from "pixi.js";
 import { ItemType } from "./ItemType";
-import { GetItem } from "../../get_data/GetItem";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
@@ -19,6 +18,7 @@ import { ApiEvent } from "../../events/api/ApiEvent";
 import { LastActivityApiResponse } from "../../api/models/LastActivityResponse";
 import { CashoutApiResponse } from "../../api/models/CashoutResponse";
 import { ResultApiResponse } from "../../api/models/ResultResponse";
+import { PickApiResponse } from "../../api/models/PickResponse";
 
 const tileSize = {
     width: 128,
@@ -32,7 +32,7 @@ const offsetTileBoard = {
 
 export class BoardContainer extends Container {
     private tiles: Tile[] = [];
-    private TilePressedAutoCount: number = 0;
+    private tilePressedAutoCount: number = 0;
 
     // Variables for the auto
     private isAuto: boolean = false;
@@ -45,6 +45,12 @@ export class BoardContainer extends Container {
 
     private balanceText: Text;
     private previousBombfield: number[] = [];
+
+    // Tile selected in auto mode
+    private selectedTilesIndex: number[] = [];
+    
+    // Save bet amount in auto mode
+    private betAmount: number = 1;
 
     constructor() {
         super();
@@ -62,6 +68,12 @@ export class BoardContainer extends Container {
         globalEmitter.on(ApiEvent.BET_RESPONSE, this.onBetResponse.bind(this));
         globalEmitter.on(ApiEvent.CASHOUT_RESPONSE, this.onCashoutResponse.bind(this));
         globalEmitter.on(ApiEvent.RESULT_RESPONSE, this.onResultResponse.bind(this));
+
+        // Handle pick response for the auto mode
+        // globalEmitter.on(ApiEvent.PICK_RESPONSE, this.onPickResponse.bind(this));
+
+        // Handle bet value change
+        globalEmitter.on(AutoBettingEvent.BET_AMOUNT_CHANGE, this.onBetAmountChange.bind(this));
 
         this.winContainer = new WinContainer();
 
@@ -89,6 +101,10 @@ export class BoardContainer extends Container {
         // gameService.postPick([3]);
 
         // gameService.postCashout();
+    }
+
+    private onBetAmountChange(newBetAmount: number) {
+        this.betAmount = newBetAmount;
     }
 
     private onBetResponse(betResponse: BetApiResponse) {
@@ -202,6 +218,8 @@ export class BoardContainer extends Container {
         if (tile.pressed) return;
 
         let tileIndex = isRandom ? -1 : this.tiles.indexOf(tile);
+
+        //#region Send Manual Pick
         gameService.postPick([tileIndex]).then((pickResponse) => {
             // Emit pick response to update ui
             globalEmitter.emit(ApiEvent.PICK_RESPONSE, pickResponse);
@@ -234,6 +252,7 @@ export class BoardContainer extends Container {
                 gameService.postResult().then((resultResponse) => globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse));
             }
         });
+        //#endregion
     }
 
     private onPressAutoMode(tile: Tile) {
@@ -242,25 +261,36 @@ export class BoardContainer extends Container {
         if (!tile.pressed) {
             tile.pressed = true;
             tile.alpha = 0.75;
-            this.TilePressedAutoCount++;
+            this.tilePressedAutoCount++;
+
+            // Get index of tile
+            this.selectedTilesIndex.push(this.tiles.indexOf(tile));
         } else {
             tile.pressed = false;
             tile.alpha = 1;
-            this.TilePressedAutoCount--;
+            this.tilePressedAutoCount--;
+
+            // Remove selected index
+            let selectedIndex = this.tiles.indexOf(tile);
+            this.selectedTilesIndex.splice(this.selectedTilesIndex.indexOf(selectedIndex), 1);
         }
 
-        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.TilePressedAutoCount);
+        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.tilePressedAutoCount);
     }
 
     private firstBet: boolean = true;
-    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
+    private onGameStateChange(
+        state: GameState,
+        bombCount: number,
+        numberOfGames: number = -1,
+        betAmount: number) {
         if (state === GameState.BETTING) {
             if (this.isAuto && numberOfGames !== -1) {
-                this.handleStartAutoBet(mines, numberOfGames);
+                this.handleStartAutoBet(betAmount, bombCount, numberOfGames);
                 return;
             }
 
-            if (mines) {
+            if (bombCount) {
 
                 if (!this.firstBet) {
                     this.interactiveChildren = false;
@@ -292,9 +322,10 @@ export class BoardContainer extends Container {
         }
     }
 
+    //#region Handle auto bet 
     private autoBetCallback: (() => void) | null = null;
-    private handleStartAutoBet(mines: number, numberOfGames: number) {
-        // console.log(numberOfGames);
+    private handleStartAutoBet(betAmount: number, bombCount: number, numberOfGames: number,) {
+        this.betAmount = betAmount;
 
         // if exist previous callback
         if (this.autoBetCallback) {
@@ -308,9 +339,35 @@ export class BoardContainer extends Container {
 
             if (elapsed >= 1000) {
                 if (phase === PhaseAuto.REVEAL) {
-                    GetItem.generateMatrix(mines);
-                    this.reavealAllTiles();
-                    phase = PhaseAuto.RESET;
+                    // Send bet request
+                    gameService.postBet(this.betAmount, bombCount).then((betResponse) => {
+                        globalEmitter.emit(ApiEvent.BET_RESPONSE, betResponse);
+
+                        // Send pick request
+                        gameService.postPick(this.selectedTilesIndex).then((pickResponse) => {
+                            globalEmitter.emit(ApiEvent.PICK_RESPONSE, pickResponse);
+
+                            // If endround is true
+                            if (pickResponse.data.end_round) {
+                                // Send result request
+                                gameService.postResult().then((resultResponse) => {
+                                    globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse);
+
+                                    this.previousBombfield = pickResponse.data.bomb_field;
+                                    this.reavealAllTiles(pickResponse);
+                                    phase = PhaseAuto.RESET;
+                                });
+                            }
+                            else {
+                                console.error("Something went wrong when auto mode running!");
+                            }
+                        });
+                    })
+                    // gameService.postBet(1, mines).then((betResponse) => {
+                    //     this.reavealAllTiles();
+                    //     phase = PhaseAuto.RESET;
+                    // });
+
                 }
                 else if (phase === PhaseAuto.RESET) {
                     this.disableWinContainer();
@@ -332,10 +389,9 @@ export class BoardContainer extends Container {
         this.ticker.add(this.autoBetCallback);
         this.ticker.start();
     }
+    //#endregion
 
-    private checkGameResult() {
-        if (!this.isAuto) return;
-        // console.log(this.diamondCount, this.mineCount);
+    private checkGameResult(pickResponse?: PickApiResponse) {
 
         // If loss notify for the UI update the bet value
         if (this.mineCount > 0) {
@@ -344,7 +400,7 @@ export class BoardContainer extends Container {
         }
 
         // If win send diamond count to auto bet container
-        globalEmitter.emit(AutoBettingEvent.ON_WIN, this.diamondCount);
+        globalEmitter.emit(AutoBettingEvent.ON_WIN, this.diamondCount, pickResponse);
     }
 
     private disableWinContainer() {
@@ -369,7 +425,7 @@ export class BoardContainer extends Container {
 
     }
 
-    private reavealAllTiles() {
+    private reavealAllTiles(pickResponse?: PickApiResponse) {
         this.diamondCount = 0;
         this.mineCount = 0;
 
@@ -396,7 +452,8 @@ export class BoardContainer extends Container {
         }
 
         // console.log(this.diamondCount, this.mineCount);
-        this.checkGameResult();
+        if (this.isAuto)
+            this.checkGameResult(pickResponse);
     }
 
     private updateTileIndex(tile: Tile, zIndex: number) {
@@ -419,7 +476,7 @@ export class BoardContainer extends Container {
 
         this.changeTileColor();
 
-        this.TilePressedAutoCount = 0;
+        this.tilePressedAutoCount = 0;
 
         // Reset the board
         this.resetAllTiles(true);
@@ -437,6 +494,6 @@ export class BoardContainer extends Container {
         this.resetAllTiles();
 
         // Reset Tile press count
-        this.TilePressedAutoCount = 0;
+        this.tilePressedAutoCount = 0;
     }
 }

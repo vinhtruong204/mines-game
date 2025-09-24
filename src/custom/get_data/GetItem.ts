@@ -1,8 +1,7 @@
 import { ItemType } from "../_game/board/ItemType";
 import { GlobalConfig } from "../config/GlobalConfig";
-import { ApiRoute, getBaseUrl, TOKEN } from "../api/ApiRoute";
 
-export class GetItem {
+class GetItem {
   private static mockData: number[] = [
     0, 1, 1, 1, 1,
     1, 1, 1, 1, 1,
@@ -11,64 +10,7 @@ export class GetItem {
     0, 1, 1, 1, 1,
   ];
 
-  private baseUrl: string;
-
   constructor() {
-    this.baseUrl = getBaseUrl();
-  }
-
-  public async fetchData(): Promise<any> {
-    try {
-      // const requestUrl = `${BASE_URL + ApiRoute.LAST_ACTIVITY}?token=${TOKEN}`;
-      const requestUrl = `${this.baseUrl + ApiRoute.LAST_ACTIVITY}?token=${TOKEN}`;
-
-      const response = await fetch(requestUrl, { method: 'GET' });
-      // {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   // body: JSON.stringify({ token: TOKEN })
-      // }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  public async bet(amount: number, bomb_count: number) {
-    try {
-      // const requestUrl = `${BASE_URL + ApiRoute.LAST_ACTIVITY}?token=${TOKEN}`;
-      const betUrl = `${this.baseUrl + ApiRoute.BET}`;
-
-      const response = await fetch(betUrl,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            token: TOKEN,
-            amount: amount,
-            bomb_count: bomb_count
-          })
-        }
-      );
-
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   }
 
   public static generateMatrix(mines: number) {

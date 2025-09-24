@@ -34,7 +34,7 @@ export class InputBetAmount extends CustomInputBase {
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
 
         // Initial bet config and update value
-        this.betCofig = [1, 400, 600, 800, 1000, 2000, 5000, 7500, 10000];
+        this.betCofig = [1, 4, 5, 800, 1000, 2000, 5000, 7500, 10000];
         this.updateValue(this.betCofig[this.currentIndex]);
 
         // Initial buttons

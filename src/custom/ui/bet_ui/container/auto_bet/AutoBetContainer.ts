@@ -16,6 +16,7 @@ import { GameState } from "../../../../manage_game_states/GameState";
 import { GameStateManager } from "../../../../manage_game_states/GameStateManager";
 import { Button } from "../../../../../app/ui/Button";
 import { GameModeChangeEvent } from "../../../../events/game_mode_events/GameModeChangeEvent";
+import { PickApiResponse } from "../../../../api/models/PickResponse";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -25,6 +26,11 @@ const defaultButtonSize = {
 }
 
 const scrollHeight = 400;
+
+export enum ButtonAutoText {
+    START = "Start Autobet",
+    STOP = "Stop Autobet",
+}
 
 export class AutoBetContainer extends BetContainer {
     private numberOfGames: LabeledInput;
@@ -89,7 +95,7 @@ export class AutoBetContainer extends BetContainer {
 
         // 
         this.startAutobet = new Button({
-            text: "Start Autobet",
+            text: ButtonAutoText.START,
             width: defaultButtonSize.width,
             height: defaultButtonSize.height,
             fontSize: 40,
@@ -200,23 +206,29 @@ export class AutoBetContainer extends BetContainer {
     }
 
     private onStartAutobet() {
-        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
+        const bombCount = GetNumberOfMines.getNumberOfMines(this.selectModeGroup.getCurrentMode());
 
-        if (this.startAutobet.text === 'Start Autobet') {
+        if (this.startAutobet.text === ButtonAutoText.START) {
+            const betAmount = Number(this.betAmount.getInputAmount().value);
+
+
             GameStateManager.getInstance().setState(GameState.BETTING);
-            globalEmitter.emit(GameStateEvent.STATE_CHANGE,
+
+            globalEmitter.emit(
+                GameStateEvent.STATE_CHANGE,
                 GameState.BETTING,
-                mineCount,
-                Number(this.numberOfGames.getInputAmount().value));
+                bombCount,
+                betAmount
+            );
 
             // Calculate profit pertime
-            this.profitMultiplierPerTime = mineCount / 10;
+            this.profitMultiplierPerTime = bombCount / 10;
 
             // Reset net gain and loss value
             this.totalNetGain = 0;
             this.totalLoss = 0;
         }
-        else {
+        else if (this.startAutobet.text === ButtonAutoText.STOP) {
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
             globalEmitter.emit(WinContainerEvent.DIASABLE);
         }
@@ -224,10 +236,10 @@ export class AutoBetContainer extends BetContainer {
 
     private onGameStateChange(state: GameState) {
         if (state === GameState.BETTING) {
-            this.startAutobet.text = 'Stop Autobet';
+            this.startAutobet.text = ButtonAutoText.STOP;
         }
         else if (state === GameState.NOT_BETTING) {
-            this.startAutobet.text = 'Start Autobet';
+            this.startAutobet.text = ButtonAutoText.START;
         }
     }
     private resetStartAutoButton() {
@@ -235,12 +247,12 @@ export class AutoBetContainer extends BetContainer {
         this.startAutobet.alpha = 0.5;
     }
 
-    private onAutoBetWin(diamondCount: number) {
+    private onAutoBetWin(diamondCount: number, pickResponse?: PickApiResponse) {
         // Calculate net gain
         this.totalNetGain += Number(this.betAmount.getInputAmount().value) * (diamondCount * this.profitMultiplierPerTime);
 
-        let profitMultiplier = 1 + diamondCount * this.profitMultiplierPerTime;
-        let totalProfit = Number(this.betAmount.getInputAmount().value) * profitMultiplier;
+        let profitMultiplier = pickResponse?.data.multiplier;
+        let totalProfit = pickResponse?.data.total_win;
 
         // Enable win container 
         globalEmitter.emit(WinContainerEvent.ENABLE, profitMultiplier, totalProfit);
@@ -248,9 +260,10 @@ export class AutoBetContainer extends BetContainer {
         if (this.onWinLabelInput.getCurrentPercent() !== 0) {
             let currBetValue = Number(this.betAmount.getInputAmount().value);
             let percentIncrease = this.onWinLabelInput.getCurrentPercent();
-            let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
+            let newBetAmount = currBetValue + currBetValue * (percentIncrease / 100);
 
-            this.betAmount.getInputAmount().value = String(newBetValue);
+            this.betAmount.getInputAmount().value = String(newBetAmount);
+            globalEmitter.emit(AutoBettingEvent.BET_AMOUNT_CHANGE, newBetAmount);
         }
 
         this.checkStopAutobetting();
@@ -263,9 +276,10 @@ export class AutoBetContainer extends BetContainer {
         if (this.onLossLabelInput.getCurrentPercent() !== 0) {
             let currBetValue = Number(this.betAmount.getInputAmount().value);
             let percentIncrease = this.onLossLabelInput.getCurrentPercent();
-            let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
+            let newBetAmount = currBetValue + currBetValue * (percentIncrease / 100);
 
-            this.betAmount.getInputAmount().value = String(newBetValue);
+            this.betAmount.getInputAmount().value = String(newBetAmount);
+            globalEmitter.emit(AutoBettingEvent.BET_AMOUNT_CHANGE, newBetAmount);
         }
 
         this.checkStopAutobetting();
