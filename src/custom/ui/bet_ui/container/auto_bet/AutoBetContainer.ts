@@ -210,7 +210,7 @@ export class AutoBetContainer extends BetContainer {
 
         if (this.startAutobet.text === ButtonAutoText.START) {
             const betAmount = Number(this.betAmount.getInputAmount().value);
-
+            // console.log(betAmount, Number(this.inputNumberOfGames.value));
 
             GameStateManager.getInstance().setState(GameState.BETTING);
 
@@ -218,6 +218,7 @@ export class AutoBetContainer extends BetContainer {
                 GameStateEvent.STATE_CHANGE,
                 GameState.BETTING,
                 bombCount,
+                Number(this.inputNumberOfGames.value),
                 betAmount
             );
 

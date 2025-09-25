@@ -1,5 +1,4 @@
 import { setEngine } from "./app/getEngine";
-import { MainGameScreen } from "./custom/_game/game_screen/MainGameScreen";
 import { userSettings } from "./app/utils/userSettings";
 import { CreationEngine } from "./engine/engine";
 
@@ -7,6 +6,7 @@ import { CreationEngine } from "./engine/engine";
  * Importing these modules will automatically register there plugins with the engine.
  */
 import "@pixi/sound";
+import { LoadScreen } from "./app/screens/LoadScreen";
 
 // Create a new creation engine instance
 const engine = new CreationEngine();
@@ -23,10 +23,10 @@ setEngine(engine);
   userSettings.init();
 
   // Show the load screen
-  // await engine.navigation.showScreen(LoadScreen);
+  await engine.navigation.showScreen(LoadScreen);
   // Show the main screen once the load screen is dismissed
   // await engine.navigation.showScreen(MainScreen);
 
-  await engine.navigation.showScreen(MainGameScreen);
+  // await engine.navigation.showScreen(MainGameScreen);
 
 })();

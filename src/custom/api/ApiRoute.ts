@@ -1,19 +1,20 @@
-export var useMock = true;
+export var useMock = false;
 export var TOKEN = "";
 
-export function getToken(): string {
+export function getToken(): { useMock: boolean; token: string } {
     const urlParams = Object.fromEntries(new URLSearchParams(window.location.search));
-    console.log(urlParams);
+    let temp: boolean;
+    // console.log(urlParams);
 
     if (urlParams?.useMock == "true") {
-        useMock = true;
+        temp = true;
     } else {
-        useMock = false;
-
+        temp = false;
         TOKEN = urlParams?.token;
     }
 
-    return TOKEN;
+    useMock = temp;
+    return { useMock: temp, token: urlParams?.token };
 }
 
 export function getBaseUrl(): string {

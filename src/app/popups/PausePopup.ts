@@ -22,6 +22,8 @@ export class PausePopup extends Container {
   constructor() {
     super();
 
+    this.zIndex = 10;
+
     this.bg = new Sprite(Texture.WHITE);
     this.bg.tint = 0x0;
     this.bg.interactive = true;

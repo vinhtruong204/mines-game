@@ -2,6 +2,10 @@ import { CircularProgressBar } from "@pixi/ui";
 import { animate } from "motion";
 import type { ObjectTarget } from "motion/react";
 import { Container, Sprite, Texture } from "pixi.js";
+import { getToken } from "../../custom/api/ApiRoute";
+import { engine } from "../getEngine";
+import { MainGameScreen } from "../../custom/_game/game_screen/MainGameScreen";
+import { PausePopup } from "../popups/PausePopup";
 
 /** Screen shown while loading assets */
 export class LoadScreen extends Container {
@@ -14,6 +18,22 @@ export class LoadScreen extends Container {
 
   constructor() {
     super();
+
+    const data = getToken();
+
+    // console.log(data);
+    if (data.useMock) {
+      engine().navigation.showScreen(MainGameScreen);
+    } else {
+      if (data.token !== undefined && data.token !== "") {
+        // console.log("token is valid");
+        engine().navigation.showScreen(MainGameScreen);
+      }
+      else {
+        // console.log("token isn't valid");
+        engine().navigation.presentPopup(PausePopup);
+      }
+    }
 
     this.progressBar = new CircularProgressBar({
       backgroundColor: "#3d3d3d",

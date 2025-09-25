@@ -225,7 +225,7 @@ export class ManualBettingContainer extends Container {
         gameService.postCashout().then((cashoutResponse) => {
             globalEmitter.emit(ApiEvent.CASHOUT_RESPONSE, cashoutResponse);
 
-            console.log(cashoutResponse);
+            // console.log(cashoutResponse);
 
             if (cashoutResponse.data?.end_round) {
                 gameService.postResult().then((resultResponse) => {

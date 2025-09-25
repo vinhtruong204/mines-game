@@ -6,6 +6,7 @@ import { BetApiResponse } from "../models/BetResponse";
 import { PickApiResponse } from "../models/PickResponse";
 import { CashoutApiResponse } from "../models/CashoutResponse";
 import { ResultApiResponse } from "../models/ResultResponse";
+import { AutoBetApiResponse } from "../models/AutobetResponse";
 
 export class GameService {
     constructor(private api: IApiClient) { }
@@ -27,6 +28,13 @@ export class GameService {
         return this.api.post<BetApiResponse>(
             `${ApiRoute.BET}`,
             { token: TOKEN, amount: amount, bomb_count: bomb_count }
+        );
+    }
+
+    public postAutoBet(amount: number, bomb_count: number, pick_index: number[]): Promise<AutoBetApiResponse> {
+        return this.api.post<AutoBetApiResponse>(
+            `${ApiRoute.BET}`,
+            { token: TOKEN, amount: amount, bomb_count: bomb_count, pick_index: pick_index}
         );
     }
 
@@ -52,6 +60,7 @@ export class GameService {
     }
 }
 
-const apiClient = new ApiClient(getBaseUrl(), getToken());
+const apiClient = new ApiClient(getBaseUrl(), getToken().token);
 
 export const gameService = new GameService(apiClient);
+

@@ -19,6 +19,7 @@ import { LastActivityApiResponse } from "../../api/models/LastActivityResponse";
 import { CashoutApiResponse } from "../../api/models/CashoutResponse";
 import { ResultApiResponse } from "../../api/models/ResultResponse";
 import { PickApiResponse } from "../../api/models/PickResponse";
+import { AutoBetApiResponse } from "../../api/models/AutobetResponse";
 
 const tileSize = {
     width: 128,
@@ -48,7 +49,7 @@ export class BoardContainer extends Container {
 
     // Tile selected in auto mode
     private selectedTilesIndex: number[] = [];
-    
+
     // Save bet amount in auto mode
     private betAmount: number = 1;
 
@@ -68,6 +69,7 @@ export class BoardContainer extends Container {
         globalEmitter.on(ApiEvent.BET_RESPONSE, this.onBetResponse.bind(this));
         globalEmitter.on(ApiEvent.CASHOUT_RESPONSE, this.onCashoutResponse.bind(this));
         globalEmitter.on(ApiEvent.RESULT_RESPONSE, this.onResultResponse.bind(this));
+        globalEmitter.on(ApiEvent.AUTO_BET_RESPONSE, this.onAutoBetResponse.bind(this));
 
         // Handle pick response for the auto mode
         // globalEmitter.on(ApiEvent.PICK_RESPONSE, this.onPickResponse.bind(this));
@@ -101,6 +103,10 @@ export class BoardContainer extends Container {
         // gameService.postPick([3]);
 
         // gameService.postCashout();
+    }
+
+    private onAutoBetResponse(autoBetResponse: AutoBetApiResponse) {
+        this.updateBalanceText(autoBetResponse.data.balance, autoBetResponse.data.currency);
     }
 
     private onBetAmountChange(newBetAmount: number) {
@@ -286,6 +292,7 @@ export class BoardContainer extends Container {
         betAmount: number) {
         if (state === GameState.BETTING) {
             if (this.isAuto && numberOfGames !== -1) {
+                // console.log(betAmount, bombCount, numberOfGames);
                 this.handleStartAutoBet(betAmount, bombCount, numberOfGames);
                 return;
             }
@@ -324,7 +331,7 @@ export class BoardContainer extends Container {
 
     //#region Handle auto bet 
     private autoBetCallback: (() => void) | null = null;
-    private handleStartAutoBet(betAmount: number, bombCount: number, numberOfGames: number,) {
+    private handleStartAutoBet(betAmount: number, bombCount: number, numberOfGames: number) {
         this.betAmount = betAmount;
 
         // if exist previous callback
@@ -337,37 +344,25 @@ export class BoardContainer extends Container {
         this.autoBetCallback = () => {
             elapsed += this.ticker.deltaMS;
 
-            if (elapsed >= 1000) {
+            if (elapsed >= 2500) {
                 if (phase === PhaseAuto.REVEAL) {
-                    // Send bet request
-                    gameService.postBet(this.betAmount, bombCount).then((betResponse) => {
-                        globalEmitter.emit(ApiEvent.BET_RESPONSE, betResponse);
+                    gameService.postAutoBet(this.betAmount, bombCount, this.selectedTilesIndex).then((autoBetResponse) => {
+                        globalEmitter.emit(ApiEvent.AUTO_BET_RESPONSE, autoBetResponse);
 
-                        // Send pick request
-                        gameService.postPick(this.selectedTilesIndex).then((pickResponse) => {
-                            globalEmitter.emit(ApiEvent.PICK_RESPONSE, pickResponse);
+                        if (autoBetResponse.data.end_round) {
+                            // Send result request
+                            gameService.postResult().then((resultResponse) => {
+                                globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse);
 
-                            // If endround is true
-                            if (pickResponse.data.end_round) {
-                                // Send result request
-                                gameService.postResult().then((resultResponse) => {
-                                    globalEmitter.emit(ApiEvent.RESULT_RESPONSE, resultResponse);
-
-                                    this.previousBombfield = pickResponse.data.bomb_field;
-                                    this.reavealAllTiles(pickResponse);
-                                    phase = PhaseAuto.RESET;
-                                });
-                            }
-                            else {
-                                console.error("Something went wrong when auto mode running!");
-                            }
-                        });
-                    })
-                    // gameService.postBet(1, mines).then((betResponse) => {
-                    //     this.reavealAllTiles();
-                    //     phase = PhaseAuto.RESET;
-                    // });
-
+                                this.previousBombfield = autoBetResponse.data?.bomb_field;
+                                this.reavealAllTiles(autoBetResponse);
+                                phase = PhaseAuto.RESET;
+                            });
+                        }
+                        else {
+                            console.error("Something went wrong when auto mode running!");
+                        }
+                    });
                 }
                 else if (phase === PhaseAuto.RESET) {
                     this.disableWinContainer();
@@ -495,5 +490,8 @@ export class BoardContainer extends Container {
 
         // Reset Tile press count
         this.tilePressedAutoCount = 0;
+
+        // Reset selected tiles
+        this.selectedTilesIndex = [];
     }
 }

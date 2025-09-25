@@ -105,7 +105,7 @@ export class ManualBetContainer extends BetContainer {
 
         // Call api 
         gameService.postBet(Number(this.betAmount.getInputAmount().value), mineCount).then((betResponse) => {
-            console.log(betResponse);
+            // console.log(betResponse);
             if (betResponse.data.end_round) return;
 
             // Emit event response
