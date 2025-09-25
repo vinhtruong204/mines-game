@@ -1,9 +1,23 @@
-export var production = false;
+export var useMock = true;
+export var TOKEN = "";
 
-export const TOKEN = "058b1e419669260969c971720e7830a3b03e04d1b39b1e816f5188dfa4efd24e";
+export function getToken(): string {
+    const urlParams = Object.fromEntries(new URLSearchParams(window.location.search));
+    console.log(urlParams);
+
+    if (urlParams?.useMock == "true") {
+        useMock = true;
+    } else {
+        useMock = false;
+
+        TOKEN = urlParams?.token;
+    }
+
+    return TOKEN;
+}
 
 export function getBaseUrl(): string {
-    return production ? "https://mngs.nasisoto.org/minigames/" : "api/minigames/";
+    return "https://mngs.nasisoto.org/games/minigames/";
 }
 
 export enum ApiRoute {

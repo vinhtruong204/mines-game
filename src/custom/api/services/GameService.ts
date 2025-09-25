@@ -1,7 +1,7 @@
-import { ApiRoute, getBaseUrl, TOKEN } from "../ApiRoute";
+import { ApiRoute, getBaseUrl, getToken, TOKEN, useMock } from "../ApiRoute";
 import { ApiClient } from "../ApiClient";
 import { IApiClient } from "../IApiClient";
-import { LastActivityApiResponse } from "../models/LastActivityResponse";
+import { LastActivityApiResponse, mockLastActivity } from "../models/LastActivityResponse";
 import { BetApiResponse } from "../models/BetResponse";
 import { PickApiResponse } from "../models/PickResponse";
 import { CashoutApiResponse } from "../models/CashoutResponse";
@@ -11,10 +11,16 @@ export class GameService {
     constructor(private api: IApiClient) { }
 
     public getLastActivity(): Promise<LastActivityApiResponse> {
-        return this.api.get<LastActivityApiResponse>(
-            `${ApiRoute.LAST_ACTIVITY}`,
-            { token: TOKEN }
-        );
+
+        if (!useMock) {
+            return this.api.get<LastActivityApiResponse>(
+                `${ApiRoute.LAST_ACTIVITY}`,
+                { token: TOKEN }
+            );
+        }
+
+        // If useMock is true, throw or return a rejected promise to satisfy return type
+        return Promise.resolve(mockLastActivity);
     }
 
     public postBet(amount: number, bomb_count: number): Promise<BetApiResponse> {
@@ -46,6 +52,6 @@ export class GameService {
     }
 }
 
-const apiClient = new ApiClient(getBaseUrl(), TOKEN);
+const apiClient = new ApiClient(getBaseUrl(), getToken());
 
 export const gameService = new GameService(apiClient);
