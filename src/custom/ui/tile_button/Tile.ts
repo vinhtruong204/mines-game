@@ -48,6 +48,8 @@ export class Tile extends ButtonContainer {
         }
         // this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_DISAPPEAR, false);
         // this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
+
+        this.zIndex = 0;
     }
 
     public handleDisAppear(itemType: ItemType) {
@@ -78,19 +80,25 @@ export class Tile extends ButtonContainer {
             default:
                 break;
         }
+
+        this.zIndex = 0;
     }
 
     public handleOpen(itemType: ItemType) {
 
         if (itemType === ItemType.CROWN) {
+            this.zIndex = this.pressed ? 5 : 1;
             const crownAppear = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_APPEAR, false);
             crownAppear.listener = {
                 complete: () => {
                     this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_IDLE, true);
                 }
             }
+
         }
         else if (itemType === ItemType.BOMB) {
+            this.zIndex = this.pressed ? 100 : 10;
+
             const bombAppear = this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_APPEAR, false);
             bombAppear.listener = {
                 complete: () => {
@@ -112,6 +120,8 @@ export class Tile extends ButtonContainer {
         this.tileSpine.state.setEmptyAnimation(0, 0.1);
 
         this.tileSpine.state.addAnimation(0, isAuto ? TileAnimation.COLOR_PURPLE : TileAnimation.COLOR_BLUE, false, 0).mixDuration = 0.15;
+
+        this.zIndex = 0;
     }
 
     get pressed(): boolean {

@@ -45,7 +45,7 @@ export class BoardContainer extends Container {
     private winContainer: WinContainer;
 
     private balanceText: Text;
-    private previousBombfield: number[] = [];
+    private previousBombfield?: number[] = [];
 
     // Tile selected in auto mode
     private selectedTilesIndex: number[] = [];
@@ -210,7 +210,7 @@ export class BoardContainer extends Container {
     }
 
     private onPress(tile: Tile, isRandom?: boolean) {
-        this.updateTileIndex(tile, 5);
+        // this.updateTileIndex(tile, 5);
         if (!tile.canPress) return;
 
         // Seperate logic for the auto mode 
@@ -245,9 +245,9 @@ export class BoardContainer extends Container {
 
             // Update default view
             if (itemType === ItemType.CROWN) {
-                this.updateTileIndex(tile, 9);
+                // this.updateTileIndex(tile, 9);
             } else if (itemType === ItemType.BOMB) {
-                this.updateTileIndex(tile, 99);
+                // this.updateTileIndex(tile, 99);
 
                 this.previousBombfield = pickResponse.data.bomb_field;
 
@@ -409,13 +409,13 @@ export class BoardContainer extends Container {
                 this.tiles[i].pressed = false;
 
             // Handle for manual -> auto mode
-            let itemType = this.previousBombfield.includes(i) ? ItemType.BOMB : ItemType.CROWN;
+            let itemType = this.previousBombfield?.includes(i) ? ItemType.BOMB : ItemType.CROWN;
             this.tiles[i].handleDisAppear(itemType);
 
             this.tiles[i].alpha = this.isAuto && this.tiles[i].pressed ? 0.75 : 1;
 
             // Reset tile z index
-            this.updateTileIndex(this.tiles[i], 0);
+            // this.updateTileIndex(this.tiles[i], 0);
         }
 
     }
@@ -425,7 +425,7 @@ export class BoardContainer extends Container {
         this.mineCount = 0;
 
         for (let i = 0; i < this.tiles.length; i++) {
-            const itemType = this.previousBombfield.includes(i) ? ItemType.BOMB : ItemType.CROWN;
+            const itemType = this.previousBombfield?.includes(i) ? ItemType.BOMB : ItemType.CROWN;
             if (itemType === ItemType.CROWN) {
                 // this.tiles[i].defaultView = this.getTileView("diamond.png");
 
@@ -434,7 +434,7 @@ export class BoardContainer extends Container {
             }
             else if (itemType === ItemType.BOMB) {
                 // Update index if item is the bomb
-                this.updateTileIndex(this.tiles[i], 100);
+                // this.updateTileIndex(this.tiles[i], 100);
 
                 // Increase mine count
                 if (this.tiles[i].pressed) this.mineCount++;
@@ -451,9 +451,9 @@ export class BoardContainer extends Container {
             this.checkGameResult(pickResponse);
     }
 
-    private updateTileIndex(tile: Tile, zIndex: number) {
-        tile.zIndex = zIndex;
-    }
+    // private updateTileIndex(tile: Tile, zIndex: number) {
+    //     tile.zIndex = zIndex;
+    // }
 
     private onPickRandom(): void {
         const available: Tile[] = this.tiles.filter((btn) => !btn.pressed);

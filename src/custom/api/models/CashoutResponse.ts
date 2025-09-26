@@ -13,3 +13,16 @@ export interface CashoutApiResponse {
     data: CashoutResponseData;
     error?: string;
 }
+
+export const mockCashoutResponse = {
+    data: {
+        pick: 3,
+        field: [3, 7, 9],
+        bomb_field: [15, 2, 5, 19, 22],
+        amount: 1000,
+        multiplier: 2.43,
+        bomb_count: 5,
+        total_win: 2430,
+        end_round: true
+    }
+}

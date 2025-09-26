@@ -23,10 +23,10 @@ export interface LastActivityApiResponse {
     error?: string;
 }
 
-export const mockLastActivity: LastActivityApiResponse = {
+export const mockLastActivityResponse: LastActivityApiResponse = {
     data: {
         username: "vinh_player",
-        balance: 1000000,
+        balance: 1000123,
         currency: "IDR",
         last_activity: {
             pick: 2,
@@ -40,5 +40,5 @@ export const mockLastActivity: LastActivityApiResponse = {
             end_round: true,
         },
         last_bet: 100,
-    },
+    }
 };
