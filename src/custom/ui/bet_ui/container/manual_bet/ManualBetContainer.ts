@@ -67,16 +67,14 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private onLastActivityResponse(lastActivityResponse: LastActivityApiResponse) {
-        if (lastActivityResponse.data.last_activity == null ||
-            lastActivityResponse.data.last_activity.is_settle ||
-            lastActivityResponse.data.last_activity.end_round) return;
-
-        this.manualBettingContainer.setGameConfig(
-            lastActivityResponse.data.last_activity.bomb_count,
-            GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - lastActivityResponse.data.last_activity.bomb_count,
-            lastActivityResponse.data.last_activity.total_win,
-            lastActivityResponse.data.last_activity.multiplier
-        )
+        if (!lastActivityResponse?.data?.last_activity?.end_round) {
+            this.manualBettingContainer.setGameConfig(
+                lastActivityResponse.data.last_activity.bomb_count,
+                GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - lastActivityResponse.data.last_activity.pick - lastActivityResponse.data.last_activity.bomb_count,
+                lastActivityResponse.data.last_activity.total_win,
+                lastActivityResponse.data.last_activity.multiplier
+            );
+        }
     }
 
 
