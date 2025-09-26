@@ -20,6 +20,8 @@ export class Tile extends ButtonContainer {
     private _pressed: boolean = false;
 
     private tileSpine: Spine;
+
+    private static zIndex: number = 0;
     constructor() {
         super();
 
@@ -50,6 +52,7 @@ export class Tile extends ButtonContainer {
         // this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_EXPLODE, false);
 
         this.zIndex = 0;
+        Tile.zIndex = 0;
     }
 
     public handleDisAppear(itemType: ItemType) {
@@ -82,12 +85,13 @@ export class Tile extends ButtonContainer {
         }
 
         this.zIndex = 0;
+        Tile.zIndex = 0;
     }
 
     public handleOpen(itemType: ItemType) {
+        this.zIndex = this.pressed ? ++Tile.zIndex : 1;
 
         if (itemType === ItemType.CROWN) {
-            this.zIndex = this.pressed ? 5 : 1;
             const crownAppear = this.tileSpine.state.setAnimation(1, TileAnimation.CROWN_APPEAR, false);
             crownAppear.listener = {
                 complete: () => {
@@ -97,7 +101,7 @@ export class Tile extends ButtonContainer {
 
         }
         else if (itemType === ItemType.BOMB) {
-            this.zIndex = this.pressed ? 100 : 10;
+            this.zIndex = this.pressed ? 100 : 50;
 
             const bombAppear = this.tileSpine.state.setAnimation(1, TileAnimation.BOMB_APPEAR, false);
             bombAppear.listener = {

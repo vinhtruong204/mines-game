@@ -69,7 +69,7 @@ export class LoadScreen extends Container {
 
   public onLoad(progress: number) {
     this.progressBar.progress = progress;
-    console.log(this.progressBar.progress);
+    // console.log(this.progressBar.progress);
   }
 
   /** Resize the screen, fired whenever window size changes  */

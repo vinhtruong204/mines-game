@@ -20,6 +20,8 @@ import { CashoutApiResponse } from "../../api/models/CashoutResponse";
 import { ResultApiResponse } from "../../api/models/ResultResponse";
 import { PickApiResponse } from "../../api/models/PickResponse";
 import { AutoBetApiResponse } from "../../api/models/AutobetResponse";
+import { GameMode } from "../../ui/bet_ui/mines_ui/GameMode";
+import { GetNumberOfMines } from "../../get_data/GetNumberOfMines";
 
 const tileSize = {
     width: 128,
@@ -33,7 +35,6 @@ const offsetTileBoard = {
 
 export class BoardContainer extends Container {
     private tiles: Tile[] = [];
-    private tilePressedAutoCount: number = 0;
 
     // Variables for the auto
     private isAuto: boolean = false;
@@ -49,6 +50,7 @@ export class BoardContainer extends Container {
 
     // Tile selected in auto mode
     private selectedTilesIndex: number[] = [];
+    private selectableCount: number = 4;
 
     // Save bet amount in auto mode
     private betAmount: number = 1;
@@ -96,15 +98,12 @@ export class BoardContainer extends Container {
                 align: 'center',
             }
         });
-        // this.balanceText.position.set(0, -250);
-        this.balanceText.zIndex = 100;
-        this.addChild(this.balanceText);
 
-        // gameService.postPick([3]);
-
-        // gameService.postCashout();
+        // this.balanceText.zIndex = 100;
+        // this.addChild(this.balanceText);
     }
 
+    //#region Api response
     private onAutoBetResponse(autoBetResponse: AutoBetApiResponse) {
         this.updateBalanceText(autoBetResponse.data.balance, autoBetResponse.data.currency);
     }
@@ -127,6 +126,11 @@ export class BoardContainer extends Container {
         }
 
         this.reavealAllTiles();
+    }
+    //#endregion
+
+    public onGameModeChange(gameMode: GameMode) {
+        this.selectableCount = GetNumberOfMines.getNumberOfMines(gameMode) - 1; // Selectable count < bomb count
     }
 
     private onLastActivityResponse(response: LastActivityApiResponse) {
@@ -265,23 +269,25 @@ export class BoardContainer extends Container {
         if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
         if (!tile.pressed) {
+            if (this.selectedTilesIndex.length >= this.selectableCount) {
+                alert("Tiles selectable have to < bomb count" + this.selectableCount);
+                return;
+            }
             tile.pressed = true;
             tile.alpha = 0.75;
-            this.tilePressedAutoCount++;
 
             // Get index of tile
             this.selectedTilesIndex.push(this.tiles.indexOf(tile));
         } else {
             tile.pressed = false;
             tile.alpha = 1;
-            this.tilePressedAutoCount--;
 
             // Remove selected index
             let selectedIndex = this.tiles.indexOf(tile);
             this.selectedTilesIndex.splice(this.selectedTilesIndex.indexOf(selectedIndex), 1);
         }
 
-        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.tilePressedAutoCount);
+        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.selectedTilesIndex.length);
     }
 
     private firstBet: boolean = true;
@@ -471,8 +477,6 @@ export class BoardContainer extends Container {
 
         this.changeTileColor();
 
-        this.tilePressedAutoCount = 0;
-
         // Reset the board
         this.resetAllTiles(true);
     }
@@ -487,9 +491,6 @@ export class BoardContainer extends Container {
         this.changeTileColor();
 
         this.resetAllTiles();
-
-        // Reset Tile press count
-        this.tilePressedAutoCount = 0;
 
         // Reset selected tiles
         this.selectedTilesIndex = [];

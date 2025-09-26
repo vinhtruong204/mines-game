@@ -75,6 +75,9 @@ export class MainGameScreen extends Container {
     }
 
     private onGameModeChange(gameMode: GameMode) {
+        // Notify the board game mode is changing
+        this.boardContainer.onGameModeChange(gameMode);
+
         switch (gameMode) {
             case GameMode.EASY:
                 this.bgSpine.state.setEmptyAnimation(1, 0.25);

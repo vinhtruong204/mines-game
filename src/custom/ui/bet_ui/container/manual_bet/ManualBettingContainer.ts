@@ -65,7 +65,7 @@ export class ManualBettingContainer extends Container {
             defaultInputFieldSize.width * 2,
             defaultInputFieldSize.height,
             'Total profit (1.00x)',
-            '0.00US$',
+            '',
             this.getInputCanNotInteract(true));
 
         // Random button
