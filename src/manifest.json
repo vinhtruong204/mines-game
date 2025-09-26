@@ -14,6 +14,19 @@
       ]
     },
     {
+      "name": "preload",
+      "assets": [
+        {
+          "alias": "slider_bg.png",
+          "src": "preload/progress_bar/slider_bg.png"
+        },
+        {
+          "alias": "slider.png",
+          "src": "preload/progress_bar/slider.png"
+        }
+      ]
+    },
+    {
       "name": "main",
       "assets": [
         {

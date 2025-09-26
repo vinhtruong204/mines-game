@@ -344,7 +344,7 @@ export class BoardContainer extends Container {
         this.autoBetCallback = () => {
             elapsed += this.ticker.deltaMS;
 
-            if (elapsed >= 2500) {
+            if (elapsed >= 2000) {
                 if (phase === PhaseAuto.REVEAL) {
                     gameService.postAutoBet(this.betAmount, bombCount, this.selectedTilesIndex).then((autoBetResponse) => {
                         globalEmitter.emit(ApiEvent.AUTO_BET_RESPONSE, autoBetResponse);

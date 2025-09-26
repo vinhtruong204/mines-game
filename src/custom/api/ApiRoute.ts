@@ -1,4 +1,4 @@
-export var useMock = false;
+export var useMock = true;
 export var TOKEN = "";
 
 export function getToken(): { useMock: boolean; token: string } {
